@@ -2,6 +2,13 @@
 
 ## Backend
 
+### Archivos a eliminar
+
+- categoria.interface.ts
+- rol.interface.ts
+- models/categotia.ts
+- models/rol.ts
+
 ### .env
 
 Nombre de la base de datos: grupo2
