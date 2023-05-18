@@ -45,4 +45,10 @@ Eliminar img y rol.
 - Se ilimina precio.
 - La colección se llamará tareas.
 
+
+
 ## Frontend
+
+## Otros
+
+Eliminar la carpeta dist.
