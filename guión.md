@@ -32,6 +32,15 @@ Eliminar img y rol.
 - Se renombra categoria por usuario.
 - Se elimina precio.
 
+### models/tarea.ts
 
+- Se renombra el de producto.
+- Renombrar nombre por titulo y adecuar el mensaje de error (el título de la tarea es obligatorio).
+- Se añade la fecha con required true.
+- Se añade observaciones como String.
+- Se renombra disponible como terminada y se pone por defecto a false.
+- Se renombra categoría por usuario con referencia a usuarios.
+- Se ilimina precio.
+- La colección se llamará tareas.
 
 ## Frontend
