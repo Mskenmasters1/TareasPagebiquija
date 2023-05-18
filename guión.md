@@ -45,6 +45,17 @@ Eliminar img y rol.
 - Se ilimina precio.
 - La colección se llamará tareas.
 
+### usuariosController.ts
+
+#### Función getUsuarios
+
+Quitar las llaves para que devuelva un array.
+
+#### Función insertUsuario
+
+- Quitar el rol en la desestructuración de la petición.
+- Quitar el rol de la creación del usuario.
+
 
 
 ## Frontend
