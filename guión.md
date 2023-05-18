@@ -152,6 +152,9 @@ Eliminar la carpeta dist.
 - Página con todas las tareas cargadas.
 - Página con tareas asignadas por columnas, como un jira, con categorías a elegir: to do, in progress, revisión, done... con la implicación de crear un nuevo modelo de categorías.
 - Permitir la asignación de tareas a varias personas en caso de que estén trabajando en ellas.
+- Cambiar la página de mis tareas por un filtro en la página de tareas por columnas general.
+- Dejar la página de mis tareas para un muestreo de tareas completo, sin columnas.
+- Dejar de mostrar tareas en done si han pasado dos semanas desde su fecha de finalización, pero si mostrarlas en las tareas concretas.
 - Permitir el cambio de contraseña si esta se ha olvidado.
 
 ## Normas de trabajo
