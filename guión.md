@@ -56,7 +56,37 @@ Quitar las llaves para que devuelva un array.
 - Quitar el rol en la desestructuración de la petición.
 - Quitar el rol de la creación del usuario.
 
+### tareasController.ts
 
+Renombrar productosController.
+- Eliminar getProductos.
+
+#### Función getProducto
+
+- Renombrar como getTareas.
+- En la consulta se cambia prdocuto por tareas y en el populate cambiar categoria por usuarios.
+- Cambiar producto por tareas en el json que se devuelve.
+
+#### Función insertProducto
+
+- Renombrar a insertTarea.
+- Cambiar productoDB por tareaDB.
+- Cambiar nombre por titulo.
+- Cambiar el mensaje de error (por ejemplo, la tarea ya existe).
+- En la creación de data eliminar la conversión del nombre a mayúsculas.
+
+#### Función updateProducto
+
+- Renombrar por updateTarea.
+- Eliminar la conversión a mayúsculas.
+- Cambiar producto por tarea.
+- Cambiar Producto por Tareas.
+- en el status devolver 200 en vez de 204.
+
+#### Función deleteProducto
+
+- Renombrar por deleteTarea.
+- Cambiar productoBorrado por tareaBorrada.
 
 ## Frontend
 
