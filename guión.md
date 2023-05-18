@@ -1,6 +1,6 @@
 # Tareas a realizar
 
-## Frontend
+## Backend
 
 ### .env
 
@@ -13,4 +13,4 @@ Eliminar img y rol.
 ### usuario.interface.ts
 
 Eliminar img y rol.
-## Backend
+## Frontend
