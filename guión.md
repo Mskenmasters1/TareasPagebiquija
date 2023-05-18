@@ -8,6 +8,8 @@
 - rol.interface.ts
 - models/categoria.ts
 - models/rol.ts
+- controllers/categoriasController.ts
+- controllers/uploadsController.ts
 
 ### .env
 
