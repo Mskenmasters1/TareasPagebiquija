@@ -43,7 +43,7 @@ Eliminar img y rol.
 - Se añade observaciones como String.
 - Se renombra disponible como terminada y se pone por defecto a false.
 - Se renombra categoría por usuario con referencia a usuarios.
-- Se ilimina precio.
+- Se elimina precio.
 - La colección se llamará tareas.
 - Lo que se exporta se llame Tareas.
 
@@ -60,13 +60,13 @@ Quitar las llaves para que devuelva un array.
 
 ### tareasController.ts
 
-Renombrar productosController.
+- Renombrar productosController.
 - Eliminar getProductos.
 
 #### Función getProducto
 
 - Renombrar como getTareas.
-- En la consulta se cambia prdocuto por tareas y en el populate cambiar categoria por usuarios.
+- En la consulta se cambia producto por tareas y en el populate cambiar categoria por usuarios.
 - Cambiar producto por tareas en el json que se devuelve.
 
 #### Función insertProducto
@@ -83,7 +83,7 @@ Renombrar productosController.
 - Eliminar la conversión a mayúsculas.
 - Cambiar producto por tarea.
 - Cambiar Producto por Tareas.
-- en el status devolver 200 en vez de 204.
+- En el status devolver 200 en vez de 204.
 
 #### Función deleteProducto
 
@@ -95,3 +95,7 @@ Renombrar productosController.
 ## Otros
 
 Eliminar la carpeta dist.
+
+## Normas de trabajo
+
+1. Intentar renombrar todo lo que se pueda con f2 desde dentro de visual studio code.
