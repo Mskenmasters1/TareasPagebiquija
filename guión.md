@@ -10,6 +10,7 @@
 - models/rol.ts
 - controllers/categoriasController.ts
 - controllers/uploadsController.ts
+- helpers/subirArchivo.ts
 
 ### .env
 
