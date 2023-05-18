@@ -1,0 +1,2676 @@
+npm create vite@latest reactalmacen -- --template react-ts
+cd reactalmacen
+npm install
+npm install bootstrap
+npm install react-router-dom 
+
+npm run dev
+
+http://127.0.0.1:5173/
+---------------------------------------------------------------------------------------------
+Eliminamos de src todo menos main.tsx y carpeta assets
+Creamos las carpetas interfaces, hooks y pages. Dentro de pages, creamos las carpetas auth y almacen
+---------------------------------------------------------------------------------------------
+Dentro de almacen creamos los archivos CategoriasPage.tsx y ProductosPage.tsx
+Dentro de auth creamos el archivo LoginPage.tsx
+---------------------------------------------------------------------------------------------
+--CategoriasPage.tsx
+
+export const CategoriasPage = () => {
+  return (
+    <>
+      <h1>Categorias</h1>
+      <hr />
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--ProductosPage.tsx
+
+export const ProductosPage = () => {
+  return (
+    <>
+      <h1>Productos</h1>
+      <hr />
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--LoginPage.tsx
+
+export const LoginPage = () => {
+  return (
+    <>
+      <h1>Login</h1>
+      <hr />
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+Dentro de interfaces creamos los archivos fetch.interface.ts, categoria.interface.ts, producto.interface.ts y usuario.interface.ts
+---------------------------------------------------------------------------------------------
+--usuario.interface.ts
+
+export interface IUsuario {
+  _id?: string;
+  nombre: string;
+  email: string;
+  password: string;
+  img: string;
+  rol: string;
+  estado: boolean;
+}
+
+---------------------------------------------------------------------------------------------
+--categoria.interface.ts
+
+export interface ICategoria {
+  _id?: string;
+  nombre: string;
+  estado: boolean;
+}
+
+---------------------------------------------------------------------------------------------
+--producto.interface.ts
+
+export interface IProducto {
+  _id?: string;
+  nombre: string;
+  estado: boolean;
+  categoria: string;
+  precio: number;
+  descripcion: string;
+  disponible: boolean;
+}
+
+---------------------------------------------------------------------------------------------
+--fetch.interface.ts
+
+export interface IFetch {
+  data: any;
+  loading: boolean;
+  status: number;
+  errorFetch: boolean;
+  errorMsg: string;
+}
+
+---------------------------------------------------------------------------------------------
+--main.tsx
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import 'bootstrap/dist/css/bootstrap.css';
+import { LoginPage } from './pages/auth/LoginPage';
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <LoginPage />
+  </React.StrictMode>
+);
+
+---------------------------------------------------------------------------------------------
+Probamos
+Dentro de hooks creamos los archivos useForm.ts y useFetchPost.ts
+---------------------------------------------------------------------------------------------
+--useForm.ts
+
+import { useState, ChangeEvent } from 'react';
+
+// <T> Es el llamado tipo genérico de TypeScript. Como este hook personalizado va a servirnos para gestionar cualquier formulario. En cada caso, los datos a gestionar serán diferentes.
+// Por ejemplo, en un formulario de login gestionaremos el email y el password, en uno de facturas todos los campos para dar de alta una factura... En este caso, será el continente
+export const useForm = <T>(initialForm: T) => {
+  const [form, setForm] = useState<T>(initialForm);
+
+  // Al cambiar cualquier campo, este se modifica y gracias a setForm se genera un nuevo estado del formulario.
+  // Este nuevo estado tendrá todas las propiedades del formulario (...form) y el valor del campo modificado ([id]) con el nuevo valor (value)
+  const onInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = target;
+    setForm({
+      ...form,
+      [id]: value
+    });
+  };
+
+  // Al ejecutar esta función volvemos al estado inicial
+  const onResetForm = () => {
+    setForm(initialForm);
+  };
+
+  // Devolvemos todo el formulario y de esas propiedades cambiamos la propiedad form con el tipo de objeto que estamos gestionando (as T) y las funciones.
+  // Todo esto lo podrá utilizar el componente que llame a este hook
+  return {
+    ...form,
+    form: form as T,
+    onInputChange,
+    onResetForm
+  };
+};
+
+---------------------------------------------------------------------------------------------
+--useFetchPost.ts
+
+import { useEffect, useState } from 'react';
+import { IFetch } from '../interfaces/fetch.interface';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const useFetchPost = <T>(url: string, body: string, addToken = true) => {
+  const [state, setState] = useState<IFetch>({
+    data: null,
+    loading: false,
+    status: 0,
+    errorFetch: false,
+    errorMsg: ''
+  });
+
+  const postData = async (): Promise<void> => {
+    if (body !== '') {
+      setState({
+        ...state,
+        loading: true
+      });
+
+      try {
+        let token = '';
+        // Las peticiones post necesitan un body con los datos que van al servidor y una cabecera para especificar que los datos van en JSON
+        if (addToken) {
+          const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+          token = infoStorage?.token;
+        }
+        const headers: HeadersInit = addToken
+          ? {
+              'Content-Type': 'application/json',
+              'x-token': token
+            }
+          : { 'Content-Type': 'application/json' };
+
+        const data = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: body
+        });
+        // Si viene un error del servidor no va al catch. Al catch va cuando no se puede acceder al servidor
+        if (data.status !== 200) {
+          const jsonErrors = await data.json();
+          let msgError = '';
+          // jsonErrors.errors es un array de errores que vendrá cuando los validadores de Node devuelvan un error (los check)
+          if (jsonErrors.errors) {
+            jsonErrors.errors.forEach((x: any) => {
+              // Por cada item del array, el validador devuelve una propiedad msg
+              msgError += x.msg + '/';
+            });
+          } else {
+            // El objeto con la propiedad msg es el que devolvemos nosotros de forma personalizada
+            msgError = jsonErrors.msg;
+          }
+          setState({
+            data: null,
+            loading: false,
+            status: data.status,
+            errorFetch: true,
+            errorMsg: msgError
+          });
+        } else {
+          // Llegados aquí, los datos vienen bien, es decir, data.json() serán los datos que devuelve el servidor tras todo el proceso realizado de forma exitosa
+          const json: T = await data.json();
+          setState({
+            data: json,
+            loading: false,
+            status: data.status,
+            errorFetch: false,
+            errorMsg: ''
+          });
+        }
+      } catch (e) {
+        setState({
+          data: null,
+          loading: false,
+          status: 0,
+          errorFetch: true,
+          errorMsg: 'No se ha podido establecer la conexión con el recurso solicitado'
+        });
+      }
+      // Al acabar la petición devolvemos un nuevo estado. Este devuelve los datos, el loading a false y el número de estado de la petición
+    }
+  };
+
+  // Cuando cambia el body realizamos una nueva petición
+  useEffect(() => {
+    postData();
+  }, [body]);
+
+  // El hook retorna los tres valores. data será del tipo genérico (as T), que hemos utilizado para esta petición
+  return {
+    data: state.data as T,
+    loading: state.loading,
+    status: state.status,
+    errorFetch: state.errorFetch,
+    errorMsg: state.errorMsg
+  };
+};
+
+---------------------------------------------------------------------------------------------
+Creamos en src la carpeta router. Dentro, creamos el archivo AppRouter.tsx
+---------------------------------------------------------------------------------------------
+--AppRouter.tsx
+
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { LoginPage } from '../pages/auth/LoginPage';
+import { ProductosPage } from '../pages/almacen/ProductosPage';
+import { CategoriasPage } from '../pages/almacen/CategoriasPage';
+
+export const AppRouter = () => {
+  return (
+    <>
+      <Routes>
+        <Route path="categorias" element={<CategoriasPage />} />
+        <Route path="productos" element={<ProductosPage />} />
+        <Route path="login" element={<LoginPage />} />
+
+        <Route path="/" element={<Navigate to="categorias" />} />
+      </Routes>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+Creamos en la carpeta pages el componente MainApp.tsx
+---------------------------------------------------------------------------------------------
+--MainApp.tsx
+
+import { AppRouter } from "../router/AppRouter";
+
+export const MainApp = () => {
+  return (
+    <>
+      <AppRouter />
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--main.tsx
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import { BrowserRouter } from 'react-router-dom';
+import { MainApp } from './pages/MainApp';
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <MainApp />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+---------------------------------------------------------------------------------------------
+useContext
+---------------------------------------------------------------------------------------------
+En la carpeta interfaces, creamos los archivos localStorage.interface.ts, context.interface.ts, login.interface.ts, 
+---------------------------------------------------------------------------------------------
+--context.interface.ts
+
+export interface IUsuarioInfo {
+  nombre: string;
+}
+
+// Esta interface determina el tipo que todos los componentes van a utilizar para gestionar el context de la aplicación
+// Todos los componentes van a poder acceder a la información del usuario (usuarioInfo) y a la función que va a permitir cambiar el usuario (setUsuarioInfo)
+export interface IUsuarioInfoContext {
+  usuarioInfo: IUsuarioInfo;
+  setUsuarioInfo: (usuarioInfo: IUsuarioInfo) => void;
+}
+
+---------------------------------------------------------------------------------------------
+--localStorage.interface.ts
+
+export interface ILocalStorageInfo {
+  nombre: string;
+  token: string;
+}
+
+---------------------------------------------------------------------------------------------
+--login.interface.ts
+
+import { IUsuario } from './usuario.interface';
+
+export interface ILogin {
+  email: string;
+  password: string;
+}
+
+export interface ILoginResponse {
+  usuario: IUsuario;
+  token: string;
+}
+
+---------------------------------------------------------------------------------------------
+Creamos en src una carpeta llamada context. Dentro, creamos los archivos AppContext.tsx y AppProvider.tsx
+---------------------------------------------------------------------------------------------
+--AppContext.tsx
+
+// El context es un espacio para uso común de elementos de la aplicación. En este ejemplo, la información del usuario (usuarioInfo) es la que
+// va formar parte de este espacio
+import { createContext } from 'react';
+import { IUsuarioInfo, IUsuarioInfoContext } from '../interfaces/context.interface';
+
+// Comenzamos con un usuario vacío
+const usuarioInfo: IUsuarioInfo = {
+  nombre: ''
+};
+
+// Creamos el objeto que va a formar parte del context
+const usuarioInfoContext: IUsuarioInfoContext = {
+  usuarioInfo: usuarioInfo,
+  setUsuarioInfo: () => null
+};
+
+// Y aquí creamos el context
+export const AppContext = createContext<IUsuarioInfoContext>(usuarioInfoContext);
+
+---------------------------------------------------------------------------------------------
+--AppProvider.tsx
+
+// Además de definir context, necesitamos algo que lo gestione. Es este UserProvider
+import { ReactNode, useState } from 'react';
+import { AppContext } from './AppContext';
+import { IUsuarioInfo } from '../interfaces/context.interface';
+
+// Este provider prepara a todos sus hijos, que serán todos los componentes que estén dentro suyo, para comunicarse con el context
+// los hijos (children) son todos los Functional components que estarán dentro del provider (React.FC). Cada uno de ellos es un ReactNode
+// Debemos definir esta interface para determinar el tipo de los hijos del provider
+interface IPropsProvider {
+  children?: ReactNode;
+}
+
+export const AppProvider: React.FC<IPropsProvider> = ({ children }) => {
+  // Este useState controla el estado del user y expone la función que lo cambiará.
+  // Son los dos valores que se le pasan al context
+  const [usuarioInfo, setUsuarioInfo] = useState<IUsuarioInfo>({ nombre: '' });
+  // Y ahora conectamos este provider con el context pasándole los valores que necesita a todos los hijos (children)
+  return <AppContext.Provider value={{ usuarioInfo, setUsuarioInfo }}>{children}</AppContext.Provider>;
+};
+
+---------------------------------------------------------------------------------------------
+En src creamos la carpeta components. Dentro, creamos el archivo Navbar.tsx
+---------------------------------------------------------------------------------------------
+--Navbar.tsx
+
+import { useContext } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
+import { IUsuarioInfoContext } from '../interfaces/context.interface';
+
+export const Navbar = () => {
+  const { usuarioInfo, setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
+  const navigate = useNavigate();
+
+  const logout = () => {
+    setUsuarioInfo({ nombre: '' });
+    localStorage.removeItem('usuarioInfo');
+    // Navegamos a login eliminando el historial reciente para no volver atrás
+    navigate('/login', {
+      replace: true
+    });
+  };
+
+  return (
+    <nav className="navbar navbar-expand-sm navbar-dark bg-dark p-2">
+      <Link className="navbar-brand" to="categorias">
+        Almacén
+      </Link>
+
+      <div className="collapse navbar-collapse">
+        <ul className="navbar-nav">
+          <li className="nav-item active">
+            <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/categorias">
+              Categorías
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/productos">
+              Productos
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+
+      <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
+        <ul className="navbar-nav ml-auto">
+          <span className="nav-item nav-link text-primary">{usuarioInfo.nombre}</span>
+
+          <button className="nav-item nav-link btn" onClick={logout}>
+            Cerrar sesión
+          </button>
+        </ul>
+      </div>
+    </nav>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--AppRouter.tsx
+
+import { Route, Routes } from 'react-router-dom';
+import { LoginPage } from '../pages/auth/LoginPage';
+import { AlmacenRoutes } from '../pages/almacen/AlmacenRouter';
+import { useEffect, useContext } from 'react';
+import { IUsuarioInfoContext } from '../interfaces/context.interface';
+import { AppContext } from '../context/AppContext';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const AppRouter = () => {
+  const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
+
+  useEffect(() => {
+    const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+    if (infoStorage?.nombre) {
+      setUsuarioInfo({ nombre: infoStorage.nombre });
+    }
+  }, []);
+
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="login" element={<LoginPage />} />
+        {/* Cualquier otra ruta se desviará a AlmacenRoutes */}
+        <Route path="/*" element={<AlmacenRoutes />} />
+      </Routes>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--LoginPage.tsx
+
+import { FormEvent, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
+import { useForm } from '../../hooks/useForm';
+import { ILogin, ILoginResponse } from '../../interfaces/login.interface';
+import { IUsuarioInfoContext } from '../../interfaces/context.interface';
+import { ILocalStorageInfo } from '../../interfaces/localStorage.interface';
+import { useFetchPost } from '../../hooks/useFetchPost';
+
+export const LoginPage = () => {
+  // Nos traemos el contexto con el usuario y la función que lo cambia
+  const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
+  const [body, setBody] = useState<string>('');
+  const navigate = useNavigate();
+
+  const { form, onInputChange, onResetForm } = useForm<ILogin>({
+    email: '',
+    password: ''
+  });
+
+  const { email, password } = form;
+
+  const {
+    loading,
+    data: loginResponse,
+    status,
+    errorFetch,
+    errorMsg
+  } = useFetchPost<ILoginResponse>('http://localhost:3000/api/auth/login', body, false);
+
+  const login = (e: FormEvent) => {
+    e.preventDefault();
+    setBody(JSON.stringify({ email, password }));
+  };
+
+  useEffect(() => {
+    if (status === 200 && errorMsg === '') {
+
+      setUsuarioInfo({ nombre: loginResponse.usuario.nombre });
+      const infoUsuarioStorage: ILocalStorageInfo = {
+        nombre: loginResponse.usuario.nombre,
+        token: loginResponse.token
+      };
+      localStorage.setItem('usuarioInfo', JSON.stringify(infoUsuarioStorage));
+      navigate('/categorias', {
+        replace: true
+      });
+    }
+  }, [status, errorMsg]);
+
+  return (
+    <>
+      <h1>Login</h1>
+      <hr />
+
+      <form onSubmit={login}>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input id="email" type="email" className="form-control" value={email} onChange={onInputChange} required />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            className="form-control"
+            value={password}
+            onChange={onInputChange}
+            required
+          />
+        </div>
+        <button className="btn btn-success" type="submit" disabled={email.trim() === '' || password.trim() === ''}>
+          Iniciar sesión
+        </button>
+        <button className="btn btn-warning" type="button" onClick={onResetForm}>
+          Borrar
+        </button>
+      </form>
+      {loading && (
+        <div className="alert alert-warning" role="alert">
+          Autenticando...
+        </div>
+      )}
+      {/* Si errorFetch es true, mostramos un mensaje de error al usuario */}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="alert">
+          {errorMsg}
+        </div>
+      )}
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--MainApp.tsx
+
+import { AppProvider } from '../context/AppProvider';
+import { AppRouter } from '../router/AppRouter';
+
+// MainApp es el componente al que llama main.tsx
+export const MainApp = () => {
+  // El AppProvider es el proveedor del context. Al ponerlo aquí, todos sus hijos, es decir, todos los componentes de la aplicación, tendrán acceso al Context
+  return (
+    <>
+      <AppProvider>
+        <AppRouter />
+      </AppProvider>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+Probamos
+---------------------------------------------------------------------------------------------
+Segundo router
+---------------------------------------------------------------------------------------------
+En la carpeta almacen creamos el archivo AlmacenRouter.tsx
+---------------------------------------------------------------------------------------------
+--AlmacenRouter.tsx
+
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navbar } from '../../components/Navbar';
+import { CategoriasPage } from './CategoriasPage';
+import { ProductosPage } from './ProductosPage';
+
+export const AlmacenRoutes = () => {
+  return (
+    <>
+      <Navbar />
+
+      <div className="container">
+        <Routes>
+          <Route path="categorias" element={<CategoriasPage />} />
+          <Route path="productos" element={<ProductosPage />} />
+
+          <Route path="/*" element={<Navigate to="categorias" />} />
+        </Routes>
+      </div>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--AppRouter.tsx
+
+import { Route, Routes } from 'react-router-dom';
+import { LoginPage } from '../pages/auth/LoginPage';
+import { AlmacenRoutes } from '../pages/almacen/AlmacenRouter';
+import { useContext, useEffect } from 'react';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+import { IUsuarioInfoContext } from '../interfaces/context.interface';
+import { AppContext } from '../context/AppContext';
+
+export const AppRouter = () => {
+  const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
+  useEffect(() => {
+    const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+    if (infoStorage?.nombre) {
+      setUsuarioInfo({ nombre: infoStorage.nombre });
+    }
+  }, []);
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="login" element={<LoginPage />} />
+        {/* Cualquier otra ruta se desviará a AlmacenRoutes */}
+        <Route path="/*" element={<AlmacenRoutes />} />
+      </Routes>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--Navbar.tsx
+
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
+
+export const Navbar = () => {
+  const { user, setUser } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  // Al hacer el logout, navegamos al login eliminando el historial. Esto es para no poder volver atrás
+  const logout = () => {
+    // Al cerrar sesión vaciamos el nombre de usuario
+    setUser({ usuario: '' });
+    navigate('/login', {
+      replace: true
+    });
+  };
+
+  return (
+    <nav className="navbar navbar-expand-sm navbar-dark bg-dark p-2">
+      <Link className="navbar-brand" to="/paisesmundo">
+        SPA Países
+      </Link>
+
+      <div className="collapse navbar-collapse">
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/paisesmundo">
+              Países del mundo
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink
+              className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`}
+              to="/formcontinente"
+            >
+              Formulario continente
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/formlengua">
+              Formulario idioma
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+
+      <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
+        <ul className="navbar-nav ml-auto">
+          <span className="nav-item nav-link text-primary">Bienvenido, {user.usuario}</span>
+
+          <button className="nav-item nav-link btn" onClick={logout}>
+            Logout
+          </button>
+        </ul>
+      </div>
+    </nav>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+Probamnos
+---------------------------------------------------------------------------------------------
+npm install react-bootstrap
+
+En carpeta almacen, creamos carpeta categorias, creamos el archivo CategoriasTable.tsx y metemos Categorias.tsx dentro. En carpeta hooks, creamos el archivo useFetchGet.ts
+---------------------------------------------------------------------------------------------
+--categoria.interface.ts
+
+export interface ICategoria {
+  _id?: string;
+  nombre: string;
+  estado?: boolean;
+}
+
+export interface ICategoriaResponse {
+  total: number;
+  categorias: ICategoria[];
+}
+
+---------------------------------------------------------------------------------------------
+--useFetchGet.ts
+
+import { useEffect, useState } from 'react';
+import { IFetch } from '../interfaces/fetch.interface';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const useFetchGet = <T>(url: string, refresh: boolean) => {
+  const [state, setState] = useState<IFetch>({
+    data: null,
+    loading: false,
+    status: 0,
+    errorFetch: false,
+    errorMsg: ''
+  });
+
+  const getData = async (): Promise<void> => {
+    if (url !== '' && refresh) {
+      setState({
+        ...state,
+        loading: true
+      });
+      let token = '';
+      const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+      token = infoStorage?.token;
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        'x-token': token
+      };
+      try {
+        const data = await fetch(url, {
+          headers: headers
+        });
+        const json = await data.json();
+
+        setState({
+          data: json,
+          loading: false,
+          status: data.status,
+          errorFetch: false,
+          errorMsg: ''
+        });
+      } catch (e) {
+        setState({
+          data: null,
+          loading: false,
+          status: 0,
+          errorFetch: true,
+          errorMsg: ''
+        });
+      }
+      refresh = false;
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [refresh]);
+
+  return {
+    data: state.data as T,
+    loading: state.loading,
+    status: state.status,
+    errorFetch: state.errorFetch
+  };
+};
+
+---------------------------------------------------------------------------------------------
+--CategoriasTable.tsx
+
+import { useEffect, useState } from 'react';
+import { useFetchDelete } from '../../../hooks/useFetchDelete';
+import { ICategoria, ICategoriaResponse } from '../../../interfaces/categoria.interface';
+import Modal from 'react-bootstrap/Modal';
+
+interface ICategoriasTableProps {
+  categoriasResponse: ICategoriaResponse;
+  setRefreshCategorias: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const CategoriasTable = ({ categoriasResponse, setRefreshCategorias }: ICategoriasTableProps) => {
+  const [url, setUrl] = useState<string>('');
+  const [show, setShow] = useState(false);
+  const [categoriaEliminar, setCategoriaEliminar] = useState<string>('');
+
+  const { total, categorias } = categoriasResponse;
+  const { loading, data: response, status, errorFetch, errorMsg } = useFetchDelete<ICategoria>(url);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (id: string | undefined) => {
+    id && setCategoriaEliminar(id);
+    setShow(true);
+  };
+
+  const deleteCategoria = () => {
+    setUrl('http://localhost:3000/api/categorias/' + categoriaEliminar);
+    setShow(false);
+  };
+
+  useEffect(() => {
+    if (status === 200) {
+      setRefreshCategorias(true);
+    }
+  }, [response]);
+
+  return (
+    <>
+      {categorias?.length > 0 && (
+        <>
+          <h2>Total categorías: {total}</h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categorias.map((x) => (
+                <tr key={x._id}>
+                  <td>{x.nombre}</td>
+                  <td>
+                    <button className="btn btn-warning">Modificar</button>
+                  </td>
+                  <td>
+                    <button className="btn btn-danger" onClick={() => handleShow(x._id)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+      {loading && (
+        <div className="alert alert-warning" role="alert">
+          Eliminando categoría...
+        </div>
+      )}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="alert">
+          {errorMsg}
+        </div>
+      )}
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Eliminar categoría</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>¿Está seguro?</Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleClose}>
+            Cancelar
+          </button>
+          <button className="btn btn-danger" onClick={() => deleteCategoria()}>
+            Eliminar
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--CategoriasPage.tsx
+
+import { useEffect, useState } from 'react';
+import { ICategoriaResponse } from '../../../interfaces/categoria.interface';
+import { useFetchGet } from '../../../hooks/useFetchGet';
+import { CategoriasTable } from './CategoriasTable';
+
+export const CategoriasPage = () => {
+  const [refreshCategorias, setRefreshCategorias] = useState<boolean>(true);
+  const {
+    loading,
+    data: categoriasResponse,
+    status,
+    errorFetch
+  } = useFetchGet<ICategoriaResponse>('http://localhost:3000/api/categorias?desde=0&limite=50', refreshCategorias);
+
+  useEffect(() => {
+    if (!loading) {
+      setRefreshCategorias(false);
+    }
+  }, [loading]);
+
+  return (
+    <>
+      <h1>Categorias</h1>
+      <hr />
+      <div className="row">
+        <div className="col"></div>
+        <div className="col">
+          {categoriasResponse && (
+            <CategoriasTable categoriasResponse={categoriasResponse} setRefreshCategorias={setRefreshCategorias} />
+          )}
+        </div>
+      </div>
+      {loading && (
+        <div className="alert alert-warning" role="alert">
+          Obteniendo categorías
+        </div>
+      )}
+      {/* Si errorFetch es true, mostramos un mensaje de error al usuario */}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="alert">
+          'Error en la consulta de categorías'
+        </div>
+      )}
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--useFetchDelete.ts
+
+import { useEffect, useState } from 'react';
+import { IFetch } from '../interfaces/fetch.interface';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const useFetchDelete = <T>(url: string) => {
+  const [state, setState] = useState<IFetch>({
+    data: null,
+    loading: false,
+    status: 0,
+    errorFetch: false,
+    errorMsg: ''
+  });
+
+  const postData = async (): Promise<void> => {
+    if (url !== '') {
+      setState({
+        ...state,
+        loading: true
+      });
+
+      try {
+        let token = '';
+        const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+        token = infoStorage?.token;
+
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json',
+          'x-token': token
+        };
+
+        const data = await fetch(url, {
+          method: 'DELETE',
+          headers: headers
+        });
+        // Si viene un error del servidor no va al catch. Al catch va cuando no se puede acceder al servidor
+        if (data.status !== 200) {
+          const jsonErrors = await data.json();
+          let msgError = '';
+          // jsonErrors.errors es un array de errores que vendrá cuando los validadores de Node devuelvan un error (los check)
+          if (jsonErrors.errors) {
+            jsonErrors.errors.forEach((x: any) => {
+              // Por cada item del array, el validador devuelve una propiedad msg
+              msgError += x.msg + '/';
+            });
+          } else {
+            // El objeto con la propiedad msg es el que devolvemos nosotros de forma personalizada
+            msgError = jsonErrors.msg;
+          }
+        
+          setState({
+            data: null,
+            loading: false,
+            status: data.status,
+            errorFetch: true,
+            errorMsg: msgError
+          });
+        } else {
+          // Llegados aquí, los datos vienen bien, es decir, data.json() serán los datos que devuelve el servidor tras todo el proceso realizado de forma exitosa
+          const json: T = await data.json();
+          setState({
+            data: json,
+            loading: false,
+            status: data.status,
+            errorFetch: false,
+            errorMsg: ''
+          });
+        }
+      } catch (e) {
+        setState({
+          data: null,
+          loading: false,
+          status: 0,
+          errorFetch: true,
+          errorMsg: 'No se ha podido establecer la conexión con el recurso solicitado'
+        });
+      }
+      // Al acabar la petición devolvemos un nuevo estado. Este devuelve los datos, el loading a false y el número de estado de la petición
+    }
+  };
+
+  // Cuando cambia el body realizamos una nueva petición
+  useEffect(() => {
+    postData();
+  }, [url]);
+
+  // El hook retorna los tres valores. data será del tipo genérico (as T), que hemos utilizado para esta petición
+  return {
+    data: state.data as T,
+    loading: state.loading,
+    status: state.status,
+    errorFetch: state.errorFetch,
+    errorMsg: state.errorMsg
+  };
+};
+
+---------------------------------------------------------------------------------------------
+--En carpeta categorias creamos CategoriasForm.tsx
+---------------------------------------------------------------------------------------------
+--
+--CategoriasForm.tsx
+
+import { FormEvent, useEffect, useState } from 'react';
+import { useForm } from '../../../hooks/useForm';
+import { useFetchPost } from '../../../hooks/useFetchPost';
+import { ICategoria } from '../../../interfaces/categoria.interface';
+
+interface ICategoriasFormProps {
+  setRefreshCategorias: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const CategoriasForm = ({ setRefreshCategorias }: ICategoriasFormProps) => {
+  const [body, setBody] = useState<string>('');
+  const { form, onInputChange } = useForm<ICategoria>({
+    nombre: ''
+  });
+
+  const { nombre } = form;
+
+  const {
+    loading,
+    data: response,
+    status,
+    errorFetch,
+    errorMsg
+  } = useFetchPost<ICategoria>('http://localhost:3000/api/categorias', body);
+
+  useEffect(() => {
+    if (status === 201 && !loading) {
+      setRefreshCategorias(true);
+    }
+    setBody('');
+  }, [loading]);
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const categoria: ICategoria = {
+      nombre: nombre
+    };
+    setBody(JSON.stringify(categoria));
+  };
+
+  return (
+    <>
+      <form onSubmit={onSubmit}>
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre</label>
+          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
+          {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
+        </div>
+        <button className="btn btn-success" type="submit" disabled={nombre.trim() === ''}>
+          Agregar categoría
+        </button>
+      </form>
+
+      {loading && (
+        <div className="alert alert-warning" role="alert">
+          Agregando categoría...
+        </div>
+      )}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="alert">
+          {errorMsg}
+        </div>
+      )}
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--CategoriasPage.tsx
+
+import { useEffect, useState } from 'react';
+import { ICategoriaResponse } from '../../../interfaces/categoria.interface';
+import { CategoriasForm } from './CategoriasForm';
+import { useFetchGet } from '../../../hooks/useFetchGet';
+import { CategoriasTable } from './CategoriasTable';
+
+export const CategoriasPage = () => {
+  const [refreshCategorias, setRefreshCategorias] = useState<boolean>(true);
+  const {
+    loading,
+    data: categoriasResponse,
+    status,
+    errorFetch
+  } = useFetchGet<ICategoriaResponse>('http://localhost:3000/api/categorias?desde=0&limite=50', refreshCategorias);
+
+  useEffect(() => {
+    if (!loading) {
+      setRefreshCategorias(false);
+    }
+  }, [loading]);
+
+  return (
+    <>
+      <h1>Categorias</h1>
+      <hr />
+      <div className="row">
+        <div className="col">
+          <CategoriasForm setRefreshCategorias={setRefreshCategorias} />
+        </div>
+        <div className="col">
+          {categoriasResponse && (
+            <CategoriasTable categoriasResponse={categoriasResponse} setRefreshCategorias={setRefreshCategorias} />
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+En carpeta hooks, creamos useFetchPut.ts
+---------------------------------------------------------------------------------------------
+--useFetchPut.ts
+
+import { useEffect, useState } from 'react';
+import { IFetch } from '../interfaces/fetch.interface';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const useFetchPut = <T>(url: string, body: string) => {
+  const [state, setState] = useState<IFetch>({
+    data: null,
+    loading: false,
+    status: 0,
+    errorFetch: false,
+    errorMsg: ''
+  });
+
+  const postData = async (): Promise<void> => {
+    if (body !== '') {
+      setState({
+        ...state,
+        loading: true
+      });
+
+      try {
+        let token = '';
+        // Las peticiones post necesitan un body con los datos que van al servidor y una cabecera para especificar que los datos van en JSON
+        const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+        token = infoStorage?.token;
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json',
+          'x-token': token
+        };
+
+        const data = await fetch(url, {
+          method: 'PUT',
+          headers: headers,
+          body: body
+        });
+       
+        // Si viene un error del servidor no va al catch. Al catch va cuando no se puede acceder al servidor
+        if (data.status !== 200 && data.status !== 201 && data.status !== 204) {
+          const jsonErrors = await data.json();
+          let msgError = '';
+          // jsonErrors.errors es un array de errores que vendrá cuando los validadores de Node devuelvan un error (los check)
+          if (jsonErrors.errors) {
+            jsonErrors.errors.forEach((x: any) => {
+              // Por cada item del array, el validador devuelve una propiedad msg
+              msgError += x.msg + '/';
+            });
+          } else {
+            // El objeto con la propiedad msg es el que devolvemos nosotros de forma personalizada
+            msgError = jsonErrors.msg;
+          }
+         
+          setState({
+            data: null,
+            loading: false,
+            status: data.status,
+            errorFetch: true,
+            errorMsg: msgError
+          });
+        } else {
+          // Llegados aquí, los datos vienen bien, es decir, data.json() serán los datos que devuelve el servidor tras todo el proceso realizado de forma exitosa
+          const json: T = await data.json();
+          setState({
+            data: json,
+            loading: false,
+            status: data.status,
+            errorFetch: false,
+            errorMsg: ''
+          });
+        }
+      } catch (e) {
+        setState({
+          data: null,
+          loading: false,
+          status: 0,
+          errorFetch: true,
+          errorMsg: 'No se ha podido establecer la conexión con el recurso solicitado'
+        });
+      }
+      // Al acabar la petición devolvemos un nuevo estado. Este devuelve los datos, el loading a false y el número de estado de la petición
+    }
+  };
+
+  // Cuando cambia el body realizamos una nueva petición
+  useEffect(() => {
+    postData();
+  }, [body]);
+
+  // El hook retorna los tres valores. data será del tipo genérico (as T), que hemos utilizado para esta petición
+  return {
+    data: state.data as T,
+    loading: state.loading,
+    status: state.status,
+    errorFetch: state.errorFetch,
+    errorMsg: state.errorMsg
+  };
+};
+
+---------------------------------------------------------------------------------------------
+En carpeta categorias, creamos CategoriasModal.tsx
+---------------------------------------------------------------------------------------------
+--CategoriasModal.tsx
+
+import { FormEvent, useEffect, useState } from 'react';
+import { ICategoria } from '../../../interfaces/categoria.interface';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import { useForm } from '../../../hooks/useForm';
+import { useFetchPut } from '../../../hooks/useFetchPut';
+
+interface ICategoriasModalProps {
+  categoria: ICategoria;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setRefreshCategorias: React.Dispatch<React.SetStateAction<boolean>>;
+  show: boolean;
+}
+
+export const CategoriasModal = ({ categoria, setShow, setRefreshCategorias, show }: ICategoriasModalProps) => {
+  const [body, setBody] = useState<string>('');
+  const { _id } = categoria;
+  const { form, onInputChange, onResetForm } = useForm<ICategoria>({
+    nombre: categoria.nombre
+  });
+
+  const { nombre } = form;
+
+  const {
+    loading,
+    data: response,
+    status,
+    errorFetch,
+    errorMsg
+  } = useFetchPut<ICategoria>(`http://localhost:3000/api/categorias/${_id}`, body);
+
+  const handleClose = () => setShow(false);
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const categoria: ICategoria = {
+      nombre: nombre
+    };
+    setBody(JSON.stringify(categoria));
+  };
+
+  useEffect(() => {
+ if ((status === 200 || status === 204) && !loading) {
+      setRefreshCategorias(true);
+    }
+    setBody('');
+    handleClose();
+  }, [loading]);
+
+  // Al pasarle valores mediante no literales (nombre: categoria.nombre) al iniciar el form, hay que hacer un setForm mediante onResetForm
+  return (
+    <>
+      <Modal show={show} onHide={handleClose} onShow={onResetForm}>
+        <form onSubmit={onSubmit}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modificar categoría</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="form-group">
+              <label htmlFor="nombre">Nombre</label>
+              <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
+              {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
+            </div>
+            {loading && (
+              <div className="alert alert-warning" role="alert">
+                Modificando categoría...
+              </div>
+            )}
+            {errorFetch && !loading && (
+              <div className="alert alert-danger" role="alert">
+                {errorMsg}
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancelar
+            </Button>
+            <Button variant="primary" type="submit">
+              Guardar cambios
+            </Button>
+          </Modal.Footer>
+        </form>
+      </Modal>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--CategoriasTable.tsx
+
+import { useEffect, useState } from 'react';
+import { useFetchDelete } from '../../../hooks/useFetchDelete';
+import { ICategoria, ICategoriaResponse } from '../../../interfaces/categoria.interface';
+import Modal from 'react-bootstrap/Modal';
+import { CategoriasModal } from './CategoriasModal';
+
+interface ICategoriasTableProps {
+  categoriasResponse: ICategoriaResponse;
+  setRefreshCategorias: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const CategoriasTable = ({ categoriasResponse, setRefreshCategorias }: ICategoriasTableProps) => {
+  const [url, setUrl] = useState<string>('');
+  const [showModificar, setShowModificar] = useState(false);
+  const [show, setShow] = useState(false);
+  const [categoriaModal, setCategoriaModal] = useState<ICategoria>({ nombre: '' });
+  const [categoriaEliminar, setCategoriaEliminar] = useState<string>('');
+  const { total, categorias } = categoriasResponse;
+
+  const { loading, data: response, status, errorFetch, errorMsg } = useFetchDelete<ICategoria>(url);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (id: string | undefined) => {
+    id && setCategoriaEliminar(id);
+    setShow(true);
+  };
+
+  const editCategoria = (e: ICategoria) => {
+    setCategoriaModal(e);
+    setShowModificar(true);
+  };
+
+  const deleteCategoria = () => {
+    setUrl('http://localhost:3000/api/categorias/' + categoriaEliminar);
+    setShow(false);
+  };
+
+  useEffect(() => {
+    if (status === 200) {
+      setRefreshCategorias(true);
+    }
+  }, [response]);
+
+  return (
+    <>
+      {categorias?.length > 0 && (
+        <>
+          <h2>Total categorías: {total}</h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categorias.map((x) => (
+                <tr key={x._id}>
+                  <td>{x.nombre}</td>
+                  <td>
+                    <button className="btn btn-warning" onClick={() => editCategoria(x)}>
+                      Modificar
+                    </button>
+                  </td>
+                  <td>
+                    <button className="btn btn-danger" onClick={() => handleShow(x._id)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+      {loading && (
+        <div className="alert alert-warning" role="status" aria-live="polite">
+          Eliminando categoría...
+        </div>
+      )}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="status" aria-live="polite">
+          {errorMsg}
+        </div>
+      )}
+
+      <CategoriasModal
+        categoria={categoriaModal}
+        show={showModificar}
+        setShow={setShowModificar}
+        setRefreshCategorias={setRefreshCategorias}
+      />
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Eliminar categoría</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>¿Está seguro?</Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleClose}>
+            Cancelar
+          </button>
+          <button className="btn btn-danger" onClick={() => deleteCategoria()}>
+            Eliminar
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--useForm.ts
+
+import { useState, ChangeEvent } from 'react';
+
+// <T> Es el llamado tipo genérico de TypeScript. Como este hook personalizado va a servirnos para gestionar cualquier formulario. En cada caso, los datos a gestionar serán diferentes.
+// Por ejemplo, en un formulario de login gestionaremos el email y el password, en uno de facturas todos los campos para dar de alta una factura... En este caso, será el continente
+export const useForm = <T>(initialForm: T) => {
+  const [form, setForm] = useState<T>(initialForm);
+
+  // Al cambiar cualquier campo, este se modifica y gracias a setForm se genera un nuevo estado del formulario.
+  // Este nuevo estado tendrá todas las propiedades del formulario (...form) y el valor del campo modificado ([id]) con el nuevo valor (value)
+  const onInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = target;
+    setForm({
+      ...form,
+      [id]: value
+    });
+  };
+
+  // Al ejecutar esta función volvemos al estado inicial
+  const onResetForm = () => {
+    setForm(initialForm);
+  };
+
+  const onSelectChange = ({ target }: ChangeEvent<HTMLSelectElement>) => {
+    const { id, value } = target;
+    setForm({
+      ...form,
+      [id]: value
+    });
+  };
+
+  const onCheckBoxChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const { id, checked } = target;
+    setForm({
+      ...form,
+      [id]: checked
+    });
+  };
+
+  // Devolvemos todo el formulario y de esas propiedades cambiamos la propiedad form con el tipo de objeto que estamos gestionando (as T) y las funciones.
+  // Todo esto lo podrá utilizar el componente que llame a este hook
+  return {
+    ...form,
+    form: form as T,
+    onInputChange,
+    onSelectChange,
+    onCheckBoxChange,
+    onResetForm
+  };
+};
+
+---------------------------------------------------------------------------------------------
+Creamos carpeta components. Dentro, creamos ComboCategorias.tsx
+---------------------------------------------------------------------------------------------
+--ComboCategorias.tsx
+
+import { ChangeEvent, useEffect, useState } from 'react';
+import { ICategoria, ICategoriaResponse } from '../interfaces/categoria.interface';
+import { useFetchGet } from '../hooks/useFetchGet';
+
+interface IComboCategoriasProps {
+  setSelected: ({ target }: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+export const ComboCategorias = ({ setSelected }: IComboCategoriasProps) => {
+  const [categorias, setCategorias] = useState<ICategoria[]>([]);
+  const { loading, data, status, errorFetch } = useFetchGet<ICategoriaResponse>(
+    'http://localhost:3000/api/categorias',
+    true
+  );
+
+  useEffect(() => {
+    if (status === 200) {
+      setCategorias([{ nombre: 'Elige una categoría', _id: '' }, ...data.categorias]);
+    }
+  }, [status]);
+
+  const selectedCategoria = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelected(e);
+  };
+
+  return (
+    <>
+      {categorias && status === 200 && (
+        <select className="form-select" aria-label="Categorias" id="categoria" onChange={selectedCategoria}>
+          {categorias.map((x, i) => (
+            <option key={x._id} value={x._id}>
+              {x.nombre}
+            </option>
+          ))}
+        </select>
+      )}
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--producto.interface.ts
+
+export interface IProducto {
+  _id?: string;
+  nombre: string;
+  estado: boolean;
+  categoria: ICategoriaProducto;
+  precio: number;
+  descripcion: string;
+  disponible: boolean;
+}
+
+export interface ICategoriaProducto {
+  _id: string;
+  nombre: string;
+}
+
+export interface IProductoResponse {
+  total: number;
+  productos: IProducto[];
+}
+
+---------------------------------------------------------------------------------------------
+--ProductosForm.tsx
+
+import { FormEvent, useEffect, useState } from 'react';
+import { useForm } from '../../../hooks/useForm';
+import { useFetchPost } from '../../../hooks/useFetchPost';
+import { IProducto } from '../../../interfaces/producto.interface';
+import { ComboCategorias } from '../../../components/ComboCategorias';
+
+interface IProductosFormProps {
+  setRefreshProductos: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ProductosForm = ({ setRefreshProductos }: IProductosFormProps) => {
+  const [body, setBody] = useState<string>('');
+  const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<IProducto>({
+    nombre: '',
+    disponible: true,
+    descripcion: '',
+    precio: 0,
+    categoria: ''
+  });
+
+  const { nombre, categoria, descripcion, disponible, precio } = form;
+  
+
+  const {
+    loading,
+    data: response,
+    status,
+    errorFetch,
+    errorMsg
+  } = useFetchPost<IProducto>('http://localhost:3000/api/productos', body);
+
+  useEffect(() => {
+    if (status === 201 && !loading) {
+      onResetForm;
+      setRefreshProductos(true);
+    }
+    setBody('');
+  }, [loading]);
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const producto: IProducto = {
+      nombre: nombre,
+      descripcion: descripcion,
+      categoria: categoria,
+      disponible: disponible,
+      precio: precio
+    };
+    setBody(JSON.stringify(producto));
+  };
+
+  return (
+    <>
+      <form onSubmit={onSubmit}>
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre</label>
+          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
+          {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
+        </div>
+        <ComboCategorias setSelected={onSelectChange} />
+        <div className="form-group">
+          <label htmlFor="descripcion">Descripción</label>
+          <input className="form-control" id="descripcion" type="text" value={descripcion} onChange={onInputChange} />
+          {descripcion.trim() === '' && <small className="text-danger">Descripción obligatoria</small>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="precio">Precio</label>
+          <input className="form-control" id="precio" type="number" value={precio} onChange={onInputChange} />
+          {precio.toString().trim() === '' && <small className="text-danger">Precio obligatorio</small>}
+        </div>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="disponible"
+            checked={disponible}
+            onChange={onCheckBoxChange}
+          />
+          <label className="form-check-label" htmlFor="disponible">
+            Disponible
+          </label>
+        </div>
+        <button className="btn btn-success" type="submit" disabled={nombre.trim() === ''}>
+          Agregar producto
+        </button>
+      </form>
+
+      {loading && (
+        <div className="alert alert-warning" role="alert">
+          Agregando producto...
+        </div>
+      )}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="alert">
+          {errorMsg}
+        </div>
+      )}
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--ProductosPage.tsx
+
+import { useEffect, useState } from 'react';
+import { IProductoResponse } from '../../../interfaces/producto.interface';
+import { useFetchGet } from '../../../hooks/useFetchGet';
+import { ProductosTable } from './ProductosTable';
+import { ProductosForm } from './ProductosForm';
+
+export const ProductosPage = () => {
+  const [refreshProductos, setRefreshProductos] = useState<boolean>(true);
+  const {
+    loading,
+    data: productosResponse,
+    status,
+    errorFetch
+  } = useFetchGet<IProductoResponse>('http://localhost:3000/api/productos?desde=0&limite=50', refreshProductos);
+
+  useEffect(() => {
+    if (!loading) {
+      setRefreshProductos(false);
+    }
+  }, [loading]);
+
+
+  return (
+    <>
+      <h1>Productos</h1>
+      <hr />
+      <div className="row">
+        <div className="col">
+          <ProductosForm setRefreshProductos={setRefreshProductos} />
+        </div>
+        <div className="col">
+          {productosResponse && (
+            <ProductosTable productosResponse={productosResponse} setRefreshProductos={setRefreshProductos} />
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--ProductosTable.tsx
+
+....
+                  <td>{(x.categoria as ICategoria).nombre}</td>
+...
+
+---------------------------------------------------------------------------------------------
+En carpeta productos, creamos ProductosModal.tsx
+---------------------------------------------------------------------------------------------
+--ComboCategorias.tsx
+
+import { ChangeEvent, useEffect, useState } from 'react';
+import { ICategoria, ICategoriaResponse } from '../interfaces/categoria.interface';
+import { useFetchGet } from '../hooks/useFetchGet';
+
+interface IComboCategoriasProps {
+  setSelected: ({ target }: React.ChangeEvent<HTMLSelectElement>) => void;
+  activa?: string;
+}
+
+export const ComboCategorias = ({ setSelected, activa }: IComboCategoriasProps) => {
+  const [categorias, setCategorias] = useState<ICategoria[]>([]);
+  const { loading, data, status, errorFetch } = useFetchGet<ICategoriaResponse>(
+    'http://localhost:3000/api/categorias',
+    true
+  );
+
+  useEffect(() => {
+    if (status === 200) {
+      setCategorias([{ nombre: 'Elige una categoría', _id: '' }, ...data.categorias]);
+    }
+  }, [status]);
+
+  const selectedCategoria = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelected(e);
+  };
+
+  return (
+    <>
+      {categorias && status === 200 && (
+        <select
+          className="form-select"
+          aria-label="Categorías"
+          id="categoria"
+          onChange={selectedCategoria}
+          value={activa}
+        >
+          {categorias.map((x, i) => (
+            <option key={x._id} value={x._id}>
+              {x.nombre}
+            </option>
+          ))}
+        </select>
+      )}
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--ProductosModal.tsx
+
+import { FormEvent, useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import { useForm } from '../../../hooks/useForm';
+import { useFetchPut } from '../../../hooks/useFetchPut';
+import { ICategoriaProducto, IProducto } from '../../../interfaces/producto.interface';
+import { ComboCategorias } from '../../../components/ComboCategorias';
+
+interface IProductosModalProps {
+  producto: IProducto;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setRefreshProductos: React.Dispatch<React.SetStateAction<boolean>>;
+  show: boolean;
+}
+
+export const ProductosModal = ({ producto, setShow, setRefreshProductos, show }: IProductosModalProps) => {
+  const [body, setBody] = useState<string>('');
+  const { _id } = producto;
+  const { form, onInputChange, onResetForm, onSelectChange, onCheckBoxChange } = useForm<IProducto>({
+    nombre: producto.nombre,
+    categoria: producto.categoria,
+    descripcion: producto.descripcion,
+    disponible: producto.disponible,
+    precio: producto.precio
+  });
+
+  const { nombre, categoria, descripcion, disponible, precio } = form;
+
+  const {
+    loading,
+    data: response,
+    status,
+    errorFetch,
+    errorMsg
+  } = useFetchPut<IProducto>(`http://localhost:3000/api/productos/${_id}`, body);
+
+  const handleClose = () => setShow(false);
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const producto: IProducto = {
+      nombre: nombre,
+      categoria: categoria,
+      descripcion: descripcion,
+      disponible: disponible,
+      precio: precio
+    };
+    setBody(JSON.stringify(producto));
+  };
+
+  useEffect(() => {
+    if ((status === 200 || status === 204) && !loading) {
+      setRefreshProductos(true);
+    }
+    setBody('');
+    handleClose();
+  }, [loading]);
+
+  return (
+    <>
+      <Modal show={show} onHide={handleClose} onShow={onResetForm}>
+        <form onSubmit={onSubmit}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modificar producto</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="form-group">
+              <label htmlFor="nombre">Nombre</label>
+              <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
+              {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
+            </div>
+            <ComboCategorias setSelected={onSelectChange} activa={(categoria as ICategoriaProducto)._id} />
+            <div className="form-group">
+              <label htmlFor="descripcion">Descripción</label>
+              <input
+                className="form-control"
+                id="descripcion"
+                type="text"
+                value={descripcion}
+                onChange={onInputChange}
+              />
+              {descripcion.trim() === '' && <small className="text-danger">Descripción obligatoria</small>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="precio">Precio</label>
+              <input className="form-control" id="precio" type="number" value={precio} onChange={onInputChange} />
+              {precio.toString().trim() === '' && <small className="text-danger">Precio obligatorio</small>}
+            </div>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="disponible"
+                checked={disponible}
+                onChange={onCheckBoxChange}
+              />
+              <label className="form-check-label" htmlFor="disponible">
+                Disponible
+              </label>
+            </div>
+            {loading && (
+              <div className="alert alert-warning" role="alert">
+                Modificando producto...
+              </div>
+            )}
+            {errorFetch && !loading && (
+              <div className="alert alert-danger" role="alert">
+                {errorMsg}
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancelar
+            </Button>
+            <Button variant="primary" type="submit">
+              Guardar cambios
+            </Button>
+          </Modal.Footer>
+        </form>
+      </Modal>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+--ProductosTable.tsx
+
+import { useEffect, useState } from 'react';
+import { useFetchDelete } from '../../../hooks/useFetchDelete';
+import { ICategoriaProducto, IProducto, IProductoResponse } from '../../../interfaces/producto.interface';
+import Modal from 'react-bootstrap/Modal';
+import { ProductosModal } from './ProductosModal';
+
+interface IProductosTableProps {
+  productosResponse: IProductoResponse;
+  setRefreshProductos: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ProductosTable = ({ productosResponse, setRefreshProductos }: IProductosTableProps) => {
+  const [url, setUrl] = useState<string>('');
+  const [show, setShow] = useState(false);
+  const [showModificar, setShowModificar] = useState(false);
+  const [productoModal, setProductoModal] = useState<IProducto>({
+    nombre: '',
+    categoria: '',
+    descripcion: '',
+    disponible: true,
+    precio: 0
+  });
+  const [productoEliminar, setProductoEliminar] = useState<string>('');
+  const { total, productos } = productosResponse;
+  const { loading, data: response, status, errorFetch, errorMsg } = useFetchDelete<IProducto>(url);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (id: string | undefined) => {
+    id && setProductoEliminar(id);
+    setShow(true);
+  };
+
+  const editProducto = (e: IProducto) => {
+    setProductoModal(e);
+    setShowModificar(true);
+  };
+
+  const deleteProducto = () => {
+    setUrl('http://localhost:3000/api/productos/' + productoEliminar);
+    setShow(false);
+  };
+
+  useEffect(() => {
+    if (status === 200) {
+      setRefreshProductos(true);
+    }
+  }, [response]);
+
+  return (
+    <>
+      {productos?.length > 0 && (
+        <>
+          <h2>Total productos: {total}</h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {productos.map((x) => (
+                <tr key={x._id}>
+                  <td>{x.nombre}</td>
+                  <td>{(x.categoria as ICategoriaProducto).nombre}</td>
+                  <td>{x.precio}</td>
+                  <td>
+                    <button className="btn btn-warning" onClick={() => editProducto(x)}>
+                      Modificar
+                    </button>
+                  </td>
+                  <td>
+                    <button className="btn btn-danger" onClick={() => handleShow(x._id)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+      {loading && (
+        <div className="alert alert-warning" role="status" aria-live="polite">
+          Eliminando categoría...
+        </div>
+      )}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="status" aria-live="polite">
+          {errorMsg}
+        </div>
+      )}
+
+      <ProductosModal
+        producto={productoModal}
+        show={showModificar}
+        setShow={setShowModificar}
+        setRefreshProductos={setRefreshProductos}
+      />
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Eliminar producto</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>¿Está seguro?</Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleClose}>
+            Cancelar
+          </button>
+          <button className="btn btn-danger" onClick={() => deleteProducto()}>
+            Eliminar
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+---------------------------------------------------------------------------------------------
+En carpeta hooks, creamos useFetchFileUpload.ts y useFetchFileDownload.ts
+---------------------------------------------------------------------------------------------
+--useFetchFileUpload.ts
+
+import { useEffect, useState } from 'react';
+import { IFetch } from '../interfaces/fetch.interface';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const useFetchFileUpload = <T>(url: string, archivo: FileList | null) => {
+  const [state, setState] = useState<IFetch>({
+    data: null,
+    loading: false,
+    status: 0,
+    errorFetch: false,
+    errorMsg: ''
+  });
+
+  const postData = async (): Promise<void> => {
+    if (url != '' && archivo) {
+      setState({
+        ...state,
+        loading: true
+      });
+
+      try {
+        let token = '';
+        // Las peticiones post necesitan un body con los datos que van al servidor y una cabecera para especificar que los datos van en JSON
+        const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+        token = infoStorage?.token;
+        const headers: HeadersInit = {
+          //      'Content-Type': 'application/json',
+          'x-token': token
+        };
+
+        const formData = new FormData();
+        formData.append('archivo', archivo.item(0)!);
+
+        const data = await fetch(url, {
+          method: 'PUT',
+          headers: headers,
+          body: formData
+        });
+        // Si viene un error del servidor no va al catch. Al catch va cuando no se puede acceder al servidor
+        if (data.status !== 200 && data.status !== 201 && data.status !== 204) {
+          const jsonErrors = await data.json();
+          let msgError = '';
+          // jsonErrors.errors es un array de errores que vendrá cuando los validadores de Node devuelvan un error (los check)
+          if (jsonErrors.errors) {
+            jsonErrors.errors.forEach((x: any) => {
+              // Por cada item del array, el validador devuelve una propiedad msg
+              msgError += x.msg + '/';
+            });
+          } else {
+            // El objeto con la propiedad msg es el que devolvemos nosotros de forma personalizada
+            msgError = jsonErrors.msg;
+          }
+
+          setState({
+            data: null,
+            loading: false,
+            status: data.status,
+            errorFetch: true,
+            errorMsg: msgError
+          });
+        } else {
+          // Llegados aquí, los datos vienen bien, es decir, data.json() serán los datos que devuelve el servidor tras todo el proceso realizado de forma exitosa
+          const json: T = await data.json();
+          setState({
+            data: json,
+            loading: false,
+            status: data.status,
+            errorFetch: false,
+            errorMsg: ''
+          });
+        }
+      } catch (e) {
+        setState({
+          data: null,
+          loading: false,
+          status: 0,
+          errorFetch: true,
+          errorMsg: 'No se ha podido establecer la conexión con el recurso solicitado'
+        });
+      }
+      // Al acabar la petición devolvemos un nuevo estado. Este devuelve los datos, el loading a false y el número de estado de la petición
+    }
+  };
+
+  // Cuando cambia el body realizamos una nueva petición
+  useEffect(() => {
+    postData();
+  }, [url]);
+
+  // El hook retorna los tres valores. data será del tipo genérico (as T), que hemos utilizado para esta petición
+  return {
+    data: state.data as T,
+    loading: state.loading,
+    status: state.status,
+    errorFetch: state.errorFetch,
+    errorMsg: state.errorMsg
+  };
+};
+
+---------------------------------------------------------------------------------------------
+--useFetchFileDownload.ts
+
+import { useEffect, useState } from 'react';
+import { IFetch } from '../interfaces/fetch.interface';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const useFetchFileDownload = <T>(url: string) => {
+  const [state, setState] = useState<IFetch>({
+    data: null,
+    loading: false,
+    status: 0,
+    errorFetch: false,
+    errorMsg: ''
+  });
+
+  const getData = async (): Promise<void> => {
+    if (url !== '') {
+      setState({
+        ...state,
+        loading: true
+      });
+      let token = '';
+      const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+      token = infoStorage?.token;
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        'x-token': token
+      };
+      try {
+        const data = await fetch(url, {
+          headers: headers
+        });
+        const blob = await data.blob();
+        const file = window.URL.createObjectURL(blob);
+        // Para ver la imagen en una pestaña aparte
+        // window.location.assign(file);
+        const link = document.createElement('a');
+        link.href = file;
+        link.download = 'archivo.png';
+        document.body.appendChild(link); // we need to append the element to the dom -> otherwise it will not work in firefox
+        link.click();
+        link.remove();
+        setState({
+          data: null,
+          loading: false,
+          status: data.status,
+          errorFetch: false,
+          errorMsg: ''
+        });
+      } catch (e) {
+        setState({
+          data: null,
+          loading: false,
+          status: 0,
+          errorFetch: true,
+          errorMsg: ''
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [url]);
+
+  return {
+    data: state.data as T,
+    loading: state.loading,
+    status: state.status,
+    errorFetch: state.errorFetch
+  };
+};
+
+---------------------------------------------------------------------------------------------
+--ProductosTable.tsx
+
+import { ChangeEvent, useEffect, useState } from 'react';
+import { useFetchDelete } from '../../../hooks/useFetchDelete';
+import { ICategoriaProducto, IProducto, IProductoResponse } from '../../../interfaces/producto.interface';
+import Modal from 'react-bootstrap/Modal';
+import { ProductosModal } from './ProductosModal';
+import { useFetchFileUpload } from '../../../hooks/useFetchFileUpload';
+import { useFetchFileDownload } from '../../../hooks/useFetchFileDownload';
+
+interface IProductosTableProps {
+  productosResponse: IProductoResponse;
+  setRefreshProductos: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ProductosTable = ({ productosResponse, setRefreshProductos }: IProductosTableProps) => {
+  const [url, setUrl] = useState<string>('');
+  const [urlUpload, setUrlUpload] = useState<string>('');
+  const [show, setShow] = useState(false);
+  const [showModificar, setShowModificar] = useState(false);
+  const [upload, setUpload] = useState(false);
+  const [productoModal, setProductoModal] = useState<IProducto>({
+    nombre: '',
+    categoria: '',
+    descripcion: '',
+    disponible: true,
+    precio: 0
+  });
+  const [productoCambiarImagen, setProductoCambiarImagen] = useState<string>('');
+  const [archivo, setArchivo] = useState<FileList | null>(null);
+  const [urlDownload, setUrlDownload] = useState<string>('');
+  const [productoEliminar, setProductoEliminar] = useState<string>('');
+  const { total, productos } = productosResponse;
+  const { loading, data: response, status, errorFetch, errorMsg } = useFetchDelete<IProducto>(url);
+
+  const {
+    loading: loadingUpload,
+    data: responseUpload,
+    status: statusUpload,
+    errorFetch: errorFetchUpload
+  } = useFetchFileUpload<IProducto>(urlUpload, archivo);
+
+  console.log(statusUpload);
+
+  const {
+    loading: loadingDownload,
+    data: responseDownload,
+    status: statusDownload,
+    errorFetch: errorFetchDownload
+  } = useFetchFileDownload<Blob>(urlDownload);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (id: string | undefined) => {
+    id && setProductoEliminar(id);
+    setShow(true);
+  };
+
+  const editProducto = (e: IProducto) => {
+    setProductoModal(e);
+    setShowModificar(true);
+  };
+
+  const deleteProducto = () => {
+    setUrl('http://localhost:3000/api/productos/' + productoEliminar);
+    setShow(false);
+  };
+
+  const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setArchivo(e.target.files!);
+  };
+
+  const downloadImage = (id: string) => {
+    setUrlDownload(`http://localhost:3000/api/uploads/productos/${id}`);
+  };
+
+  const uploadImage = (id: string) => {
+    setUrlUpload(`http://localhost:3000/api/uploads/productos/${id}`);
+  };
+
+  useEffect(() => {
+    if (status === 200) {
+      setRefreshProductos(true);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    if (!loadingDownload) {
+      setUrlDownload('');
+    }
+  }, [loadingDownload]);
+
+  useEffect(() => {
+    if (!loadingUpload) {
+      setUrlUpload('');
+    }
+
+    if (statusUpload === 200 && !loadingUpload) {
+      alert('Imagen subida con éxito');
+    }
+  }, [loadingUpload]);
+
+  return (
+    <>
+      {productos?.length > 0 && (
+        <>
+          <h2>Total productos: {total}</h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th colSpan={4}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {productos.map((x) => (
+                <tr key={x._id}>
+                  <td>{x.nombre}</td>
+                  <td>{(x.categoria as ICategoriaProducto).nombre}</td>
+                  <td>{x.precio}</td>
+                  <td>
+                    <button className="btn btn-warning" onClick={() => editProducto(x)}>
+                      Modificar
+                    </button>
+                  </td>
+                  <td>
+                    <button className="btn btn-danger" onClick={() => handleShow(x._id)}>
+                      Eliminar
+                    </button>
+                  </td>
+                  <td>
+                    <div>
+                      <label htmlFor="imagen" className="form-label">
+                        Elegir imagen
+                      </label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        accept="image/*"
+                        id="imagen"
+                        onChange={(e) => onFileInputChange(e)}
+                      />
+                    </div>
+                    <button className="btn btn-primary" onClick={(e) => uploadImage(x._id!)}>
+                      Subir imagen
+                    </button>
+                  </td>
+                  <td>
+                    <button className="btn btn-info" onClick={() => downloadImage(x._id!)}>
+                      Descargar imagen
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+      {loading && (
+        <div className="alert alert-warning" role="status" aria-live="polite">
+          Eliminando categoría...
+        </div>
+      )}
+      {errorFetch && !loading && (
+        <div className="alert alert-danger" role="status" aria-live="polite">
+          {errorMsg}
+        </div>
+      )}
+
+      <ProductosModal
+        producto={productoModal}
+        show={showModificar}
+        setShow={setShowModificar}
+        setRefreshProductos={setRefreshProductos}
+      />
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Eliminar producto</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>¿Está seguro?</Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleClose}>
+            Cancelar
+          </button>
+          <button className="btn btn-danger" onClick={() => deleteProducto()}>
+            Eliminar
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+--------------------------------------------------------------------------------------------
+Proyecto Node
+--------------------------------------------------------------------------------------------
+--auth.ts
+
+import { Router } from 'express';
+import { check } from 'express-validator';
+import { validarCampos } from '../middlewares/validarCampos';
+import { login, refreshToken } from '../controllers/authController';
+import { validarJWT } from '../middlewares/validarJwt';
+
+export const routerAuth = Router();
+
+routerAuth.post(
+  '/login',
+  [
+    check('email', 'El email es obligatorio').isEmail(),
+    check('password', 'La contraseña es obligatoria').not().isEmpty(),
+    validarCampos
+  ],
+  login
+);
+
+routerAuth.get('/refreshToken', validarJWT, refreshToken);
+
+--------------------------------------------------------------------------------------------
+--authController.ts
+
+import { Request, Response } from 'express';
+import bcryptjs from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+import { Usuario } from '../models/usuario';
+import { generarJWT } from '../helpers/generarJwt';
+
+export const login = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  try {
+    // Verificamos si el email existe
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(400).json({
+        msg: 'Usuario / Password no son correctos - email'
+      });
+    }
+    // Verificamos si el usuario está activo
+    if (!usuario.estado) {
+      return res.status(401).json({
+        msg: 'Usuario / Password no son correctos - estado: false'
+      });
+    }
+
+    // Verificamos la contraseña
+    const validPassword = bcryptjs.compareSync(password, usuario.password);
+    if (!validPassword) {
+      return res.status(401).json({
+        msg: 'Usuario / Password no son correctos - password'
+      });
+    }
+
+    // Generamos el JWT
+    const token = await generarJWT(usuario.id);
+
+    res.status(200).json({
+      usuario,
+      token
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      msg: 'Se ha producido un error'
+    });
+  }
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const token = req.header('x-token')!;
+  const { id } = jwt.verify(token, process.env.SECRETPRIVATEKEY || '') as jwt.JwtPayload;
+  const newToken = await generarJWT(id);
+  res.status(200).json({
+    newToken
+  });
+};
+
+--------------------------------------------------------------------------------------------
+--AppRouter.tsx
+
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { LoginPage } from '../pages/auth/LoginPage';
+import { AlmacenRoutes } from '../pages/almacen/AlmacenRouter';
+import { useContext, useEffect } from 'react';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+import { IUsuarioInfoContext } from '../interfaces/context.interface';
+import { AppContext } from '../context/AppContext';
+import { useFetchGet } from '../hooks/useFetchGet';
+import { IRefreshToken } from '../interfaces/login.interface';
+
+export const AppRouter = () => {
+  const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
+  const navigate = useNavigate();
+
+  const {
+    data: newTokenInfo,
+    errorFetch,
+    status
+  } = useFetchGet<IRefreshToken>('http://localhost:3000/api/auth/refreshToken', true);
+
+  useEffect(() => {
+    const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+    infoStorage && setUsuarioInfo({ nombre: infoStorage.nombre });
+  }, []);
+
+  useEffect(() => {
+    if (newTokenInfo) {
+      console.log(newTokenInfo);
+      const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+      infoStorage.token = newTokenInfo.newToken;
+      localStorage.setItem('usuarioInfo', JSON.stringify(infoStorage));
+    }
+  }, [newTokenInfo]);
+
+  useEffect(() => {
+    if (status === 401 || errorFetch) {
+      console.log(status);
+      localStorage.removeItem('usuarioInfo');
+      navigate('/login', {
+        replace: true
+      });
+    }
+  }, [status, errorFetch]);
+
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="login" element={<LoginPage />} />
+        {/* Cualquier otra ruta se desviará a AlmacenRoutes */}
+        <Route path="/*" element={<AlmacenRoutes />} />
+      </Routes>
+    </>
+  );
+};
+
+--------------------------------------------------------------------------------------------
+--useFetchGet.tsx
+
+import { useEffect, useState } from 'react';
+import { IFetch } from '../interfaces/fetch.interface';
+import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
+
+export const useFetchGet = <T>(url: string, refresh: boolean) => {
+  const [state, setState] = useState<IFetch>({
+    data: null,
+    loading: false,
+    status: 0,
+    errorFetch: false,
+    errorMsg: ''
+  });
+
+  const getData = async (): Promise<void> => {
+    if (url !== '' && refresh) {
+      setState({
+        ...state,
+        loading: true
+      });
+      let token = '';
+      const infoStorage: ILocalStorageInfo = JSON.parse(localStorage.getItem('usuarioInfo')!);
+      token = infoStorage?.token;
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        'x-token': token
+      };
+      try {
+        const data = await fetch(url, {
+          headers: headers
+        });
+        if (data.status !== 200) {
+          const jsonErrors = await data.json();
+          const msgError = jsonErrors.msg;
+
+          setState({
+            data: null,
+            loading: false,
+            status: data.status,
+            errorFetch: true,
+            errorMsg: msgError
+          });
+        } else {
+          // Llegados aquí, los datos vienen bien, es decir, data.json() serán los datos que devuelve el servidor tras todo el proceso realizado de forma exitosa
+          const json: T = await data.json();
+          setState({
+            data: json,
+            loading: false,
+            status: data.status,
+            errorFetch: false,
+            errorMsg: ''
+          });
+        }
+      } catch (e) {
+        setState({
+          data: null,
+          loading: false,
+          status: 0,
+          errorFetch: true,
+          errorMsg: ''
+        });
+      }
+      refresh = false;
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [refresh]);
+
+  return {
+    data: state.data as T,
+    loading: state.loading,
+    status: state.status,
+    errorFetch: state.errorFetch
+  };
+};
+
+--------------------------------------------------------------------------------------------
+--login.interface.tsx
+
+import { IUsuario } from './usuario.interface';
+
+export interface ILogin {
+  email: string;
+  password: string;
+}
+
+export interface ILoginResponse {
+  usuario: IUsuario;
+  token: string;
+}
+
+export interface IRefreshToken {
+  newToken: string;
+}
+
+
+
