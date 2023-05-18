@@ -44,6 +44,7 @@ Eliminar img y rol.
 - Se renombra categoría por usuario con referencia a usuarios.
 - Se ilimina precio.
 - La colección se llamará tareas.
+- Lo que se exporta se llame Tareas.
 
 ### usuariosController.ts
 
