@@ -1,7 +1,7 @@
 import { Rol } from '../models/rol';
 import { Usuario } from '../models/usuario';
 import { Categoria } from '../models/categoria';
-import { Producto } from '../models/producto';
+import { Producto } from '../models/tarea';
 
 export const esRolValido = async (rol = '') => {
   const existeRol = await Rol.findOne({ rol });
