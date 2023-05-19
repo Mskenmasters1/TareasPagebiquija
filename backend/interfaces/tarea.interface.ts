@@ -6,5 +6,6 @@ export interface ITarea {
   estado: boolean;
   usuario: Types.ObjectId;
   observaciones: string;
+  descripcion: string;
   terminada: boolean;
 }
