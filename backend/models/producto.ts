@@ -1,8 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
-import { IProducto } from '../interfaces/producto.interface';
+import { ITarea } from '../interfaces/tarea.interface';
 import { Categoria } from './categoria';
 
-const productoSchema = new Schema<IProducto>({
+const productoSchema = new Schema<ITarea>({
   nombre: {
     type: String,
     required: [true, 'El nombre es obligatorio'],
