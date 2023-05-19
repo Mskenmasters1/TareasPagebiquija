@@ -13,7 +13,7 @@
 - helpers/subirArchivo.ts
 - middlewares/validarRoles.ts
 - middlewares/validarArchivo.ts
-- routes/productos.ts
+- routes/categorias.ts
 - routes/upload.ts
 
 ### .env
@@ -119,7 +119,8 @@ Quitar las llaves para que devuelva un array.
 - Creación de un formulario de inicio de sesión, y además un botón de registro en caso de que no haya cuenta.
 - El formulario de inicio de sesión se compondrá de correo y contraseña.
 - Ocultar el formulario de login y mostrar uno de registro en caso de que se pulse ese botón.
-- EL formulario de registro tendrá los campos de nombre, correo y contraseña.
+- EL formulario de registro tendrá los
+campos de nombre, correo y contraseña.
 - Al pulsar el botón de registrar mostrar un mensaje de que la operación se ha realizado con éxito y volver a mostrar el formulario de login.
 - Iniciar sesión y generar un token desde el back.
 - Tener en cuenta la temporización del token y hacer refresh cuando sea necesario.
