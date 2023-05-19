@@ -2,13 +2,10 @@ import express from 'express';
 import { Express } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import fileUpload from 'express-fileupload';
 import { dbConnection } from './database/config';
 import { routerUsuarios } from './routes/usuarios';
 import { routerAuth } from './routes/auth';
-import { routerCategorias } from './routes/categorias';
-import { routerProductos } from './routes/productos';
-import { routerUploads } from './routes/uploads';
+import { routerTareas } from './routes/tareas';
 
 dotenv.config();
 
@@ -18,18 +15,10 @@ export const server: Express = express();
 server.use(express.static('public'));
 server.use(cors());
 server.use(express.json());
-server.use(
-  fileUpload({
-    createParentPath: true // Para que cree la carpeta si no existe
-  })
-);
-
-// Rutas
+// Routas
 server.use('/api/auth', routerAuth);
 server.use('/api/usuarios', routerUsuarios);
-server.use('/api/categorias', routerCategorias);
-server.use('/api/productos', routerProductos);
-server.use('/api/uploads', routerUploads);
+server.use('/api/tareas', routerTareas);
 
 // Base de datos
 dbConnection();
