@@ -1,14 +1,7 @@
-import { Rol } from '../models/rol';
-import { Usuario } from '../models/usuario';
-import { Categoria } from '../models/categoria';
-import { Producto } from '../models/producto';
 
-export const esRolValido = async (rol = '') => {
-  const existeRol = await Rol.findOne({ rol });
-  if (!existeRol) {
-    throw new Error(`El rol ${rol} no está registrado en la BD`);
-  }
-};
+import { Usuario } from '../models/usuario';
+
+import { tarea } from '../models/producto';
 
 export const emailExiste = async (email = '') => {
   // Verificar si el email existe
@@ -36,7 +29,7 @@ export const existeCategoriaPorId = async (id: string) => {
 
 export const existeProductoPorId = async (id: string) => {
   // Verificar si el correo existe
-  const existeProducto = await Producto.findById(id);
+  const existeProducto = await tarea.findById(id);
   if (!existeProducto) {
     throw new Error(`El id no existe ${id}`);
   }

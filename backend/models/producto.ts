@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import { IProducto } from '../interfaces/producto.interface';
 import { Categoria } from './categoria';
 
-const productoSchema = new Schema<IProducto>({
+const tareaSchema = new Schema<IProducto>({
   nombre: {
     type: String,
     required: [true, 'El nombre es obligatorio'],
@@ -26,4 +26,4 @@ const productoSchema = new Schema<IProducto>({
   disponible: { type: Boolean, default: true }
 });
 
-export const Producto = mongoose.model('productos', productoSchema);
+export const tarea = mongoose.model('tareas', tareaSchema);

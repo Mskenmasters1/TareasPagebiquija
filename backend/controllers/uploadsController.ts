@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { subirArchivo } from '../helpers/subirArchivo';
 import { Usuario } from '../models/usuario';
-import { Producto } from '../models/producto';
+import { tarea } from '../models/producto';
 import { IUsuario } from '../interfaces/usuario.interface';
 import { Document } from 'mongoose';
 import { IProducto } from '../interfaces/producto.interface';
@@ -26,7 +26,7 @@ export const actualizarImagen = async (req: Request, res: Response) => {
       break;
 
     case 'productos':
-      modelo = await Producto.findById(id);
+      modelo = await tarea.findById(id);
       if (!modelo) {
         return res.status(400).json({
           msg: `No existe un producto con el id ${id}`
@@ -78,7 +78,7 @@ export const mostrarImagen = async (req: Request, res: Response) => {
       break;
 
     case 'productos':
-      modelo = await Producto.findById(id);
+      modelo = await tarea.findById(id);
       if (!modelo) {
         return res.status(400).json({
           msg: `No existe un producto con el id ${id}`

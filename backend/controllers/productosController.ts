@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { Producto } from '../models/producto';
+import { tarea } from '../models/producto';
 
 export const getProductos = async (req: Request, res: Response) => {
   const { limite = 5, desde = 0 } = req.query;
   const query = { estado: true };
 
   const [total, productos] = await Promise.all([
-    Producto.countDocuments(query),
+    tarea.countDocuments(query),
     // En populate, debemos poner la propiedad que está relacionada con la colección categorías
-    Producto.find(query).populate('categoria', 'nombre').skip(Number(desde)).limit(Number(limite))
+    tarea.find(query).populate('categoria', 'nombre').skip(Number(desde)).limit(Number(limite))
   ]);
 
   res.status(200).json({
@@ -19,7 +19,7 @@ export const getProductos = async (req: Request, res: Response) => {
 
 export const getProducto = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const producto = await Producto.findById(id).populate('categoria', 'nombre');
+  const producto = await tarea.findById(id).populate('categoria', 'nombre');
 
   res.status(200).json(producto);
 };
@@ -27,7 +27,7 @@ export const getProducto = async (req: Request, res: Response) => {
 export const insertProducto = async (req: Request, res: Response) => {
   const { estado, ...body } = req.body;
 
-  const productoDB = await Producto.findOne({ nombre: body.nombre.toUpperCase() });
+  const productoDB = await tarea.findOne({ nombre: body.nombre.toUpperCase() });
 
   if (productoDB) {
     return res.status(400).json({
@@ -41,7 +41,7 @@ export const insertProducto = async (req: Request, res: Response) => {
     nombre: body.nombre.toUpperCase()
   };
 
-  const producto = new Producto(data);
+  const producto = new tarea(data);
 
   // Guardar DB
   await producto.save();
@@ -57,14 +57,14 @@ export const updateProducto = async (req: Request, res: Response) => {
     data.nombre = data.nombre.toUpperCase();
   }
 
-  const producto = await Producto.findByIdAndUpdate(id, data, { new: true });
+  const producto = await tarea.findByIdAndUpdate(id, data, { new: true });
 
   res.status(204).json(producto);
 };
 
 export const deleteProducto = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const productoBorrado = await Producto.findByIdAndUpdate(id, { estado: false }, { new: true });
+  const productoBorrado = await tarea.findByIdAndUpdate(id, { estado: false }, { new: true });
 
   res.json(productoBorrado);
 };
