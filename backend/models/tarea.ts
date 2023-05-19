@@ -14,7 +14,7 @@ const tareaSchema = new Schema<ITarea>({
   },
   fecha: {
     type: Date,
-        required: true
+    required: true
   },
   usuario: {
     type: Schema.Types.ObjectId,
@@ -22,8 +22,8 @@ const tareaSchema = new Schema<ITarea>({
     required: true
   },
   descripcion: { type: String },
-  terminada: { type: Boolean, default: true },
-    observaciones: { type: String }
+  terminada: { type: Boolean, default: false },
+  observaciones: { type: String }
 });
 
-export const Producto = mongoose.model('productos', tareaSchema);
+export const Tarea = mongoose.model('tareas', tareaSchema);
