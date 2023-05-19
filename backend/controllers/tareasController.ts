@@ -3,16 +3,11 @@ import { Tarea } from '../models/tarea';
 
 export const getTareas = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const tarea = await Tarea.findById(id);
+    const tareas = await Tarea.find();
 
-    if (!tarea) {
-      return res.status(404).json({ error: "La tarea no fue encontrada." });
-    }
-
-    res.status(200).json(tarea);
+    res.status(200).json(tareas);
   } catch (error) {
-    res.status(500).json({ error: "Error de servidor: Ocurrió un error al obtener la tarea." });
+    res.status(500).json({ error: "Error de servidor: Ocurrió un error al obtener las tareas." });
   }
 };
 

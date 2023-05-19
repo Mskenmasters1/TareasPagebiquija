@@ -23,7 +23,7 @@ routerUsuarios.get("/", [validarJWT], getUsuarios);
 routerUsuarios.post(
 	"/",
 	[
-		validarJWT,
+		// validarJWT,
 		check('nombre')
 			.notEmpty().withMessage('El nombre es obligatorio'),
 		check('password')
