@@ -2,7 +2,6 @@ import { Router } from "express";
 import { check } from "express-validator";
 import {
 	emailExiste,
-	esRolValido,
 	existeUsuarioPorId,
 } from "../helpers/dbValidators";
 import { validarCampos } from "../middlewares/validarCampos";
