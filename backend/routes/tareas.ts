@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import { existeTareaPorId } from '../helpers/dbValidators';
+import { existeTareaPorId, existeUsuarioPorId } from '../helpers/dbValidators';
 import {
   deleteTarea,
   getTareas,
+  getTareasByUsuario,
   insertTarea,
   updateTarea
 } from '../controllers/tareasController';
@@ -12,17 +13,16 @@ import { validarCampos } from '../middlewares/validarCampos';
 
 export const routerTareas = Router();
 
-//  Obtener todas las tareas - público
+//  Obtener todas las tareas -
 routerTareas.get('/', getTareas);
 
-// Obtener una tarea por id - público
-routerTareas.get(
-  '/:id',
+// Obtener tareas por usuario
+routerTareas.get('/:idUsuario',
   [check('id', 'No es un id de Mongo válido').isMongoId(), check('id').custom(existeTareaPorId), validarCampos],
-  getTarea
+  getTareasByUsuario
 );
 
-// Crear tarea - privado - cualquier persona con un token válido
+// Crear tarea
 routerTareas.post(
   '/',
   [
@@ -35,19 +35,19 @@ routerTareas.post(
   insertTarea
 );
 
-// Actualizar - privado - cualquiera con token válido
+// Actualizar tarea
 routerTareas.put(
   '/:id',
   [
     validarJWT,
-    // check('usuario','No es un id de Mongo').isMongoId(),
+    check('usuario','No es un id de Mongo').isMongoId(),
     check('id').custom(existeUsuarioPorId),
     validarCampos
   ],
   updateTarea
 );
 
-// Borrar una tarea - Admin
+// Borrar una tarea
 routerTareas.delete(
   '/:id',
   [

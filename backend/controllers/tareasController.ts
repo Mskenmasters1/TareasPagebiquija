@@ -80,7 +80,7 @@ export const deleteTarea = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "La tarea no fue encontrada." });
     }
 
-    res.status(200).json({ message: "La tarea ha sido eliminada exitosamente." });
+    res.status(200).json({ message: "La tarea ha sido eliminada con éxito." });
   } catch (error) {
     res.status(500).json({ error: "Ocurrió un error al eliminar la tarea." });
   }

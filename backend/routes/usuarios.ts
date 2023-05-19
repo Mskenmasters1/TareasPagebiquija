@@ -9,7 +9,6 @@ import {
 	deleteUsuario,
 	getUsuarios,
 	insertUsuario,
-	updateUsuario,
 } from "../controllers/usuariosController";
 import { validarJWT } from "../middlewares/validarJwt";
 
@@ -25,12 +24,15 @@ routerUsuarios.post(
 	"/",
 	[
 		validarJWT,
-		check("nombre", "El nombre es obligatorio").not().isEmpty(),
-		check("password", "El password debe de ser más de 6 letras").isLength({
-			min: 6,
-		}),
-		check("email", "El email no es válido").isEmail(),
-		check("email").custom(emailExiste),
+		check('nombre')
+			.notEmpty().withMessage('El nombre es obligatorio'),
+		check('password')
+			.notEmpty().withMessage('La password no puede estar vacía')
+			.isLength({ min: 6 }).withMessage('La password debe tener mínimo 6 caracteres'),
+					check('email')
+			.notEmpty().withMessage('El Email es obligatorio')
+			.isEmail().withMessage('El email no es válido')
+			.custom(emailExiste),
 		validarCampos,
 	],
 	insertUsuario
