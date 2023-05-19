@@ -1,10 +1,10 @@
 import { Types } from 'mongoose';
 
-export interface IProducto {
-  nombre: string;
+export interface ITarea {
+  titulo: string;
+  fecha: Date;
   estado: boolean;
-  categoria: Types.ObjectId;
-  precio: number;
-  descripcion: string;
-  disponible: boolean;
+  usuario: Types.ObjectId;
+  observaciones: string;
+  terminada: boolean;
 }
