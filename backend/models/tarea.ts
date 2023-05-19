@@ -2,8 +2,8 @@ import mongoose, { Schema } from 'mongoose';
 import { ITarea } from '../interfaces/tarea.interface';
 import { Categoria } from './categoria';
 
-const productoSchema = new Schema<ITarea>({
-  nombre: {
+const tareaSchema = new Schema<ITarea>({
+  titulo: {
     type: String,
     required: [true, 'El nombre es obligatorio'],
     unique: true
@@ -13,17 +13,18 @@ const productoSchema = new Schema<ITarea>({
     default: true,
     required: true
   },
-  precio: {
-    type: Number,
-    default: 0
+  fecha: {
+    type: Date,
+        required: true
   },
-  categoria: {
+  usuario: {
     type: Schema.Types.ObjectId,
-    ref: 'categorias',
+    ref: 'usuarios',
     required: true
   },
   descripcion: { type: String },
-  disponible: { type: Boolean, default: true }
+  terminada: { type: Boolean, default: true }
+    observaciones: { type: String }
 });
 
-export const Producto = mongoose.model('productos', productoSchema);
+export const Producto = mongoose.model('productos', tareaSchema);
