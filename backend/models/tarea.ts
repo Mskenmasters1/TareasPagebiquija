@@ -1,11 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
 import { ITarea } from '../interfaces/tarea.interface';
-import { Categoria } from './categoria';
 
 const tareaSchema = new Schema<ITarea>({
   titulo: {
     type: String,
-    required: [true, 'El nombre es obligatorio'],
+    required: [true, 'El título es obligatorio'],
     unique: true
   },
   estado: {
@@ -23,7 +22,7 @@ const tareaSchema = new Schema<ITarea>({
     required: true
   },
   descripcion: { type: String },
-  terminada: { type: Boolean, default: true }
+  terminada: { type: Boolean, default: true },
     observaciones: { type: String }
 });
 
