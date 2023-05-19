@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IProducto } from '../interfaces/producto.interface';
+import { IProducto } from '../interfaces/tarea.interface';
 import { Categoria } from './categoria';
 
 const productoSchema = new Schema<IProducto>({
