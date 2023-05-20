@@ -21,7 +21,7 @@ export const existeUsuarioPorId = async (id: string) => {
 
 export const existeTareaPorId= async (id: string) => {
   // Verificar si la categoría existe
-  const ExisteTarea= await Categoria.findById(id);
+  const ExisteTarea= await Tarea.findById(id);
   if (!ExisteTarea) {
     throw new Error(`El id no existe ${id}`);
   }
