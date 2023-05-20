@@ -19,26 +19,11 @@ export const existeUsuarioPorId = async (id: string) => {
 };
 
 
-export const existeCategoriaPorId = async (id: string) => {
+export const existeTareaPorId= async (id: string) => {
   // Verificar si la categoría existe
-  const existeCategoria = await Categoria.findById(id);
-  if (!existeCategoria) {
+  const ExisteTarea= await Categoria.findById(id);
+  if (!ExisteTarea) {
     throw new Error(`El id no existe ${id}`);
   }
 };
 
-export const existeProductoPorId = async (id: string) => {
-  // Verificar si el correo existe
-  const existeProducto = await tarea.findById(id);
-  if (!existeProducto) {
-    throw new Error(`El id no existe ${id}`);
-  }
-};
-
-export const coleccionesPermitidas = (coleccion = '', colecciones: string[] = []) => {
-  const incluida = colecciones.includes(coleccion);
-  if (!incluida) {
-    throw new Error(`La colección ${coleccion} no es permitida, ${colecciones}`);
-  }
-  return true;
-};
