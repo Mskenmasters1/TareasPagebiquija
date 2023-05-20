@@ -114,7 +114,30 @@ Quitar las llaves para que devuelva un array.
 
 ## Frontend
 
-### Primera pantalla: login
+### Archivos a borrar
+
+- categoria.interface.ts
+
+### Pasos a seguir
+
+#### Componente de navbar
+
+- Envolver lo ya hecho con un header
+- Envolver lo ya hecho con un fragment.
+- Sacar fuera de la nav el primer link y meterlo al inicio como h1.
+- Renombrar almacén como tareas.
+- to="/categorias" por to="/tareas"
+- to="/productos" por to="/crear"
+- Que las páginas sean mis tareas y crear tarea.
+- Quitar la segunda lista del nav, de hecho quitar la segunda lista y dejarla solo con el div.
+
+#### Interface usuario.interface.ts
+
+Eliminar imagen y rol
+
+### Ideas de pantallas
+
+#### Primera pantalla: login
 
 - Creación de un formulario de inicio de sesión, y además un botón de registro en caso de que no haya cuenta.
 - El formulario de inicio de sesión se compondrá de correo y contraseña.
@@ -125,20 +148,19 @@ campos de nombre, correo y contraseña.
 - Iniciar sesión y generar un token desde el back.
 - Tener en cuenta la temporización del token y hacer refresh cuando sea necesario.
 
-### Header
+#### Header
 
 - Generar una navbar que tenga los enlaces de crear tarea, y mis tareas.
-- Decidir si lo que cierra sesión será un botón o un enlace y aplicar en el header o la navbar, se podría mostrar la información de usuario aquí: algo como cerrar sesión en la cuenta de Peipto.
-- Hacer una modal de cierre de sesión para preguntar si uno realmente está seguro de cerrarla.
+- Decidir si lo que cierra sesión será un botón o un enlace y aplicar en el header o la navbar, se podría mostrar la información de usuario aquí: algo como cerrar sesión en la cuenta de Pepito.
 
-### Formulario de creación de tareas
+#### Formulario de creación de tareas
 
 - Encabezado de: nueva tarea.
-- Campos: título, descripción,  fecha de creación, observaciones, selector de usuarios con una opción de sin asignar.
+- Campos: título, descripción,  fecha de creación, observaciones, selector de usuarios.
 - Botón de envío. Mensaje con una live region de que se ha creado la tarea.
 - Contacto con el back para recoger los usuarios, y para hacer el post de la tarea.
 
-### Página de mis tareas
+#### Página de mis tareas
 
 - Muestreo de mis tareas (a decidir forma) con botón de editar, y botón de eliminar.
 - Que el botón de editar nos muestre un formulario como el de crear con los campos ya rellenados para poder tocarlos.
