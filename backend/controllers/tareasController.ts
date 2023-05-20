@@ -69,7 +69,7 @@ export const deleteTarea = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const tarea = await Tarea.findByIdAndDelete(id);
+    const tarea = await Tarea.findByIdAndUpdate(id, { estado: false }, { new: true });
 
     if (!tarea) {
       return res.status(404).json({ error: "La tarea no fue encontrada." });

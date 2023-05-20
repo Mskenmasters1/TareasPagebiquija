@@ -15,18 +15,17 @@ export const getUsuarios = async (req: Request, res: Response) => {
 
 //insertar un nuevo usuario encriptando la contraseña
 export const insertUsuario = async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const { nombre, email, password } = req.body;
   try {
-    const existeEmail = await Usuario.findOne({ email: email });
-    if (existeEmail) {
-      return res.status(400).json({ msg: `Ya existe un usuario con el Email ${email}` });
-    }
-    const usuario = new Usuario(req.body);
+    const usuario = new Usuario({ nombre, email, password });
+
     const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync(usuario.password, salt);
+    usuario.password = bcryptjs.hashSync(password, salt);
+
+    // Guardar en BD
     await usuario.save();
+
     res.status(201).json({
-      msg: 'Usuario creado correctamente',
       usuario
     });
   }
@@ -40,7 +39,7 @@ export const deleteUsuario = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const usuario = await Usuario.findByIdAndDelete(id);
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
 
     if (!usuario) {
       return res.status(404).json({
