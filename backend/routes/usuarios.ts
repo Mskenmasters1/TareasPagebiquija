@@ -1,10 +1,16 @@
-import { Router } from 'express';
-import { check } from 'express-validator';
-import { emailExiste, esRolValido, existeUsuarioPorId } from '../helpers/dbValidators';
-import { validarCampos } from '../middlewares/validarCampos';
-import { deleteUsuario, getUsuarios, insertUsuario, updateUsuario } from '../controllers/usuariosController';
-import { validarJWT } from '../middlewares/validarJwt';
-import { esAdminRol } from '../middlewares/validarRoles';
+import { Router } from "express";
+import { check } from "express-validator";
+import {
+	emailExiste,
+	existeUsuarioPorId,
+} from "../helpers/dbValidators";
+import { validarCampos } from "../middlewares/validarCampos";
+import {
+	deleteUsuario,
+	getUsuarios,
+	insertUsuario,
+} from "../controllers/usuariosController";
+import { validarJWT } from "../middlewares/validarJwt";
 
 export const routerUsuarios = Router();
 
@@ -12,43 +18,33 @@ export const routerUsuarios = Router();
 // Si hay errores, validarCampos devolverá un error. Si no los hay, ejecutará el resto del controller (insertUsuario o updateUsuario)
 
 // En las peticiones, incluimos el middleware para comprobar el acceso de personas autenticadas
-routerUsuarios.get('/', [validarJWT], getUsuarios);
+routerUsuarios.get("/", [validarJWT], getUsuarios);
 
 routerUsuarios.post(
-  '/',
-  [
-    validarJWT,
-    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-    check('password', 'El password debe de ser más de 6 letras').isLength({ min: 6 }),
-    check('email', 'El email no es válido').isEmail(),
-    check('email').custom(emailExiste),
-    // check('rol', 'No es un rol válido').isIn(['ADMIN_ROLE','USER_ROLE']),
-    check('rol').custom(esRolValido),
-    validarCampos
-  ],
-  insertUsuario
-);
-
-routerUsuarios.put(
-  '/:id',
-  [
-    validarJWT,
-    check('id', 'No es un ID válido').isMongoId(),
-    check('id').custom(existeUsuarioPorId),
-    check('rol').custom(esRolValido),
-    validarCampos
-  ],
-  updateUsuario
+	"/",
+	[
+		// validarJWT,
+		check('nombre')
+			.notEmpty().withMessage('El nombre es obligatorio'),
+		check('password')
+			.notEmpty().withMessage('La password no puede estar vacía')
+			.isLength({ min: 6 }).withMessage('La password debe tener mínimo 6 caracteres'),
+					check('email')
+			.notEmpty().withMessage('El Email es obligatorio')
+			.isEmail().withMessage('El email no es válido')
+			.custom(emailExiste),
+		validarCampos,
+	],
+	insertUsuario
 );
 
 routerUsuarios.delete(
-  '/:id',
-  [
-    validarJWT,
-    esAdminRol,
-    check('id', 'No es un ID válido').isMongoId(),
-    check('id').custom(existeUsuarioPorId),
-    validarCampos
-  ],
-  deleteUsuario
+	"/:id",
+	[
+		validarJWT,
+		check("id", "No es un ID válido").isMongoId(),
+		check("id").custom(existeUsuarioPorId),
+		validarCampos,
+	],
+	deleteUsuario
 );

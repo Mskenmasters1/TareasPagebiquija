@@ -5,9 +5,9 @@ import { Usuario } from '../models/usuario';
 import { generarJWT } from '../helpers/generarJwt';
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
+
     // Verificamos si el email existe
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
@@ -15,6 +15,7 @@ export const login = async (req: Request, res: Response) => {
         msg: 'Usuario / Password no son correctos - email'
       });
     }
+
     // Verificamos si el usuario está activo
     if (!usuario.estado) {
       return res.status(401).json({
@@ -38,7 +39,6 @@ export const login = async (req: Request, res: Response) => {
       token
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       msg: 'Se ha producido un error'
     });
@@ -46,10 +46,16 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
-  const token = req.header('x-token')!;
-  const { id } = jwt.verify(token, process.env.SECRETPRIVATEKEY || '') as jwt.JwtPayload;
-  const newToken = await generarJWT(id);
-  res.status(200).json({
-    newToken
-  });
+  try {
+    const token = req.header('x-token')!;
+    const { id } = jwt.verify(token, process.env.SECRETPRIVATEKEY || '') as jwt.JwtPayload;
+    const newToken = await generarJWT(id);
+    res.status(200).json({
+      newToken
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: 'Se ha producido un error'
+    });
+  }
 };

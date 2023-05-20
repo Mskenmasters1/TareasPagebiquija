@@ -1,7 +1,6 @@
-
 import { Usuario } from '../models/usuario';
+import { Tarea } from '../models/tarea';
 
-import { tarea } from '../models/producto';
 
 export const emailExiste = async (email = '') => {
   // Verificar si el email existe
@@ -18,6 +17,7 @@ export const existeUsuarioPorId = async (id: string) => {
     throw new Error(`El id no existe ${id}`);
   }
 };
+
 
 export const existeCategoriaPorId = async (id: string) => {
   // Verificar si la categoría existe

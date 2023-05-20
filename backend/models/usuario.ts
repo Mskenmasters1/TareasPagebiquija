@@ -18,14 +18,6 @@ const usuarioSchema = new Schema<IUsuario>({
     type: String,
     required: [true, 'La contraseña es obligatoria']
   },
-  img: {
-    type: String
-  },
-  rol: {
-    type: String,
-    required: true,
-    enum: ['ADMIN_ROLE', 'USER_ROLE'] // Para solo acpetar unos determinados valores
-  },
   estado: {
     type: Boolean,
     default: true
