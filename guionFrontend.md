@@ -40,3 +40,8 @@ Quitamos imagen y rol.
 - Reutilizar el link de categorías para redirigirlo a crear tareas.
 - Reutilizar el link de productos para redirigirlo a mis tareas.
 - Dejar la opción de cerrar sesión fuera del navbar.
+
+## Páginas de tareas
+
+- Se renombrarán las páginas de productos.
+- La visualización de tareas se hará con etiquetas details.
