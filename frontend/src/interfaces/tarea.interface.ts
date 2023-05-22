@@ -1,4 +1,4 @@
-export interface IProducto {
+export interface ITarea {
   _id?: string;
   titulo: string;
     fecha: string;
@@ -14,7 +14,7 @@ export interface IUsuario {
   nombre: string;
 }
 
-export interface IProductoResponse {
+export interface ITareaResponse {
   total: number;
-  productos: IProducto[];
+  tareas: ITarea[];
 }
