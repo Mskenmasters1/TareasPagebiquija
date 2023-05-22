@@ -49,13 +49,13 @@ export const LoginPage = () => {
 
   return (
     <>
-      <h1>Login</h1>
+      <h1>Inicio de sesión</h1>
       <hr />
 
       <form onSubmit={login}>
         <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" className="form-control" value={email} onChange={onInputChange} required />
+          <label htmlFor="email">Correo electrónico</label>
+          <input id="email" type="email" title="Introduzca su correo electrónico" className="form-control" value={email} onChange={onInputChange} required />
         </div>
         <div className="form-group">
           <label htmlFor="password">Contraseña</label>
@@ -64,6 +64,7 @@ export const LoginPage = () => {
             type="password"
             className="form-control"
             value={password}
+            title="Introduzca su contraseña"
             onChange={onInputChange}
             required
           />
