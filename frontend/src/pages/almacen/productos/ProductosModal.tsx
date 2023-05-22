@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPut } from '../../../hooks/useFetchPut';
-import { ICategoriaProducto, IProducto } from '../../../interfaces/tarea.interface';
+import { IUsuario, IProducto } from '../../../interfaces/tarea.interface';
 import { ComboCategorias } from '../../../components/ComboCategorias';
 
 interface IProductosModalProps {
@@ -18,13 +18,13 @@ export const ProductosModal = ({ producto, setShow, setRefreshProductos, show }:
   const { _id } = producto;
   const { form, onInputChange, onResetForm, onSelectChange, onCheckBoxChange } = useForm<IProducto>({
     titulo: producto.titulo,
-    categoria: producto.categoria,
+    usuario: producto.usuario,
     descripcion: producto.descripcion,
-    disponible: producto.disponible,
+    terminada: producto.terminada,
     precio: producto.precio
   });
 
-  const { titulo: nombre, categoria, descripcion, disponible, precio } = form;
+  const { titulo: nombre, usuario: categoria, descripcion, terminada: disponible, precio } = form;
 
   const {
     loading,
@@ -40,9 +40,9 @@ export const ProductosModal = ({ producto, setShow, setRefreshProductos, show }:
     e.preventDefault();
     const producto: IProducto = {
       titulo: nombre,
-      categoria: categoria,
+      usuario: categoria,
       descripcion: descripcion,
-      disponible: disponible,
+      terminada: disponible,
       precio: precio
     };
     setBody(JSON.stringify(producto));
@@ -69,7 +69,7 @@ export const ProductosModal = ({ producto, setShow, setRefreshProductos, show }:
               <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
               {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
             </div>
-            <ComboCategorias setSelected={onSelectChange} activa={(categoria as ICategoriaProducto)._id} />
+            <ComboCategorias setSelected={onSelectChange} activa={(categoria as IUsuario)._id} />
             <div className="form-group">
               <label htmlFor="descripcion">Descripción</label>
               <input

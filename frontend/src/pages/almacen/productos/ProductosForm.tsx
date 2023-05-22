@@ -12,13 +12,13 @@ export const ProductosForm = ({ setRefreshProductos }: IProductosFormProps) => {
   const [body, setBody] = useState<string>('');
   const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<IProducto>({
     titulo: '',
-    disponible: true,
+    terminada: true,
     descripcion: '',
     precio: 0,
-    categoria: ''
+    usuario: ''
   });
 
-  const { titulo: nombre, categoria, descripcion, disponible, precio } = form;
+  const { titulo: nombre, usuario: categoria, descripcion, terminada: disponible, precio } = form;
 
   const {
     loading,
@@ -41,8 +41,8 @@ export const ProductosForm = ({ setRefreshProductos }: IProductosFormProps) => {
     const producto: IProducto = {
       titulo: nombre,
       descripcion: descripcion,
-      categoria: categoria,
-      disponible: disponible,
+      usuario: categoria,
+      terminada: disponible,
       precio: precio
     };
     setBody(JSON.stringify(producto));

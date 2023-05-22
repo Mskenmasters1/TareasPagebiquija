@@ -1,14 +1,15 @@
 export interface IProducto {
   _id?: string;
   titulo: string;
+    fecha: string;
   estado?: boolean;
-  categoria: ICategoriaProducto | string;
-  precio: number;
+  usuario: IUsuario | string;
   descripcion: string;
-  disponible: boolean;
+  terminada: boolean;
+    observaciones: string;
 }
 
-export interface ICategoriaProducto {
+export interface IUsuario {
   _id: string;
   nombre: string;
 }
