@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useFetchDelete } from '../../../hooks/useFetchDelete';
-import { ICategoriaProducto, IProducto, IProductoResponse } from '../../../interfaces/producto.interface';
+import { ICategoriaProducto, IProducto, IProductoResponse } from '../../../interfaces/tarea.interface';
 import Modal from 'react-bootstrap/Modal';
 import { ProductosModal } from './ProductosModal';
 import { useFetchFileUpload } from '../../../hooks/useFetchFileUpload';
@@ -18,7 +18,7 @@ export const ProductosTable = ({ productosResponse, setRefreshProductos }: IProd
   const [showModificar, setShowModificar] = useState(false);
   const [upload, setUpload] = useState(false);
   const [productoModal, setProductoModal] = useState<IProducto>({
-    nombre: '',
+    titulo: '',
     categoria: '',
     descripcion: '',
     disponible: true,
@@ -114,7 +114,7 @@ export const ProductosTable = ({ productosResponse, setRefreshProductos }: IProd
             <tbody>
               {productos.map((x) => (
                 <tr key={x._id}>
-                  <td>{x.nombre}</td>
+                  <td>{x.titulo}</td>
                   <td>{(x.categoria as ICategoriaProducto).nombre}</td>
                   <td>{x.precio}</td>
                   <td>

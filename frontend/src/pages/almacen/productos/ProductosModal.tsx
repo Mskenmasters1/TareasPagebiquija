@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPut } from '../../../hooks/useFetchPut';
-import { ICategoriaProducto, IProducto } from '../../../interfaces/producto.interface';
+import { ICategoriaProducto, IProducto } from '../../../interfaces/tarea.interface';
 import { ComboCategorias } from '../../../components/ComboCategorias';
 
 interface IProductosModalProps {
@@ -17,14 +17,14 @@ export const ProductosModal = ({ producto, setShow, setRefreshProductos, show }:
   const [body, setBody] = useState<string>('');
   const { _id } = producto;
   const { form, onInputChange, onResetForm, onSelectChange, onCheckBoxChange } = useForm<IProducto>({
-    nombre: producto.nombre,
+    titulo: producto.titulo,
     categoria: producto.categoria,
     descripcion: producto.descripcion,
     disponible: producto.disponible,
     precio: producto.precio
   });
 
-  const { nombre, categoria, descripcion, disponible, precio } = form;
+  const { titulo: nombre, categoria, descripcion, disponible, precio } = form;
 
   const {
     loading,
@@ -39,7 +39,7 @@ export const ProductosModal = ({ producto, setShow, setRefreshProductos, show }:
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const producto: IProducto = {
-      nombre: nombre,
+      titulo: nombre,
       categoria: categoria,
       descripcion: descripcion,
       disponible: disponible,

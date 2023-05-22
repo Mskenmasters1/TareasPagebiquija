@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPost } from '../../../hooks/useFetchPost';
-import { IProducto } from '../../../interfaces/producto.interface';
+import { IProducto } from '../../../interfaces/tarea.interface';
 import { ComboCategorias } from '../../../components/ComboCategorias';
 
 interface IProductosFormProps {
@@ -11,14 +11,14 @@ interface IProductosFormProps {
 export const ProductosForm = ({ setRefreshProductos }: IProductosFormProps) => {
   const [body, setBody] = useState<string>('');
   const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<IProducto>({
-    nombre: '',
+    titulo: '',
     disponible: true,
     descripcion: '',
     precio: 0,
     categoria: ''
   });
 
-  const { nombre, categoria, descripcion, disponible, precio } = form;
+  const { titulo: nombre, categoria, descripcion, disponible, precio } = form;
 
   const {
     loading,
@@ -39,7 +39,7 @@ export const ProductosForm = ({ setRefreshProductos }: IProductosFormProps) => {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const producto: IProducto = {
-      nombre: nombre,
+      titulo: nombre,
       descripcion: descripcion,
       categoria: categoria,
       disponible: disponible,

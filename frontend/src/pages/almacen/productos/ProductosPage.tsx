@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { IProductoResponse } from '../../../interfaces/producto.interface';
+import { IProductoResponse } from '../../../interfaces/tarea.interface';
 import { useFetchGet } from '../../../hooks/useFetchGet';
 import { ProductosTable } from './ProductosTable';
 import { ProductosForm } from './ProductosForm';

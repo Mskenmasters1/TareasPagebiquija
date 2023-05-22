@@ -1,6 +1,6 @@
 export interface IProducto {
   _id?: string;
-  nombre: string;
+  titulo: string;
   estado?: boolean;
   categoria: ICategoriaProducto | string;
   precio: number;
