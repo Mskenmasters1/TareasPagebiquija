@@ -22,3 +22,11 @@ Quitamos imagen y rol.
 - Cambiar disponible por terminada.
 - Añadir observaciones como string.
 - Añadir la fecha como string.
+
+## comboCategorias.tsx
+
+- Renombrar a comboUsuarios.tsx.
+- Cambiar categorias por usuarios.
+- En el useEffect eliminar el objeto de selecciona una categoría.
+- Etiquetar el select con un label for en vez de aria-label. El mensaje será asignar a.
+- Usar el context para que el usuario que ha iniciado sesión sea el que esté seleccionado por defecto.
