@@ -30,3 +30,13 @@ Quitamos imagen y rol.
 - En el useEffect eliminar el objeto de selecciona una categoría.
 - Etiquetar el select con un label for en vez de aria-label. El mensaje será asignar a.
 - Usar el context para que el usuario que ha iniciado sesión sea el que esté seleccionado por defecto.
+
+## Navbar
+
+- Renombrarlo a header.
+- Retornar un header.
+- Sacar fuera el link con la clase navbar-brand y ponerlo en un h1.
+- Cambiar Almacén por Gestor de tareas y redirigirlo a la página home.
+- Reutilizar el link de categorías para redirigirlo a crear tareas.
+- Reutilizar el link de productos para redirigirlo a mis tareas.
+- Dejar la opción de cerrar sesión fuera del navbar.
