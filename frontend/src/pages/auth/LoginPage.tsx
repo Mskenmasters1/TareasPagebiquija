@@ -1,5 +1,5 @@
 import { FormEvent, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { useForm } from '../../hooks/useForm';
 import { ILogin, ILoginResponse } from '../../interfaces/login.interface';
@@ -87,6 +87,12 @@ export const LoginPage = () => {
           {errorMsg}
         </div>
       )}
+
+
+<p>
+        ¿No tiene cuenta?{' '}
+        <Link to="/register">Regístrese</Link>
+      </p>
     </>
   );
 };

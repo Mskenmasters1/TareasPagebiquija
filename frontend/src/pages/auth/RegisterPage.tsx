@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { useFetchPost } from '../../hooks/useFetchPost';
 import { IUsuario } from '../../interfaces/usuario.interface';
+import { Link } from 'react-router-dom';
 
 export const RegisterPage = () => {
   const [body, setBody] = useState<string>('');
@@ -69,6 +70,12 @@ export const RegisterPage = () => {
           Registro efectuado con éxito.
         </div>
       )}
+
+<p>
+        ¿Ya tiene cuenta?{' '}
+        <Link to="/login">Inicie sesión</Link>
+      </p>
+
     </>
   );
 };
