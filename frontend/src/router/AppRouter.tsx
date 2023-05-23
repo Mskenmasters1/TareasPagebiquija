@@ -7,8 +7,8 @@ import { IUsuarioInfoContext } from '../interfaces/context.interface';
 import { AppContext } from '../context/AppContext';
 import { useFetchGet } from '../hooks/useFetchGet';
 import { IRefreshToken } from '../interfaces/login.interface';
-import { HomePage } from '../pages/homePage';
 import { RegisterPage } from '../pages/auth/RegisterPage';
+import { HomePage } from '../pages/HomePage';
 
 export const AppRouter = () => {
   const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
