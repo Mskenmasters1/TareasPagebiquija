@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { useFetchPost } from '../../hooks/useFetchPost';
 import { IUsuario } from '../../interfaces/usuario.interface';
@@ -17,7 +17,6 @@ export const RegisterForm = () => {
 
   const {
     loading,
-    data: response,
     status,
     errorFetch,
     errorMsg
