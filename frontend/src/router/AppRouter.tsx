@@ -34,21 +34,14 @@ export const AppRouter = () => {
   }, [newTokenInfo]);
 
   useEffect(() => {
-
-
-
-    if (status === 401 || errorFetch) {
-
-      if (location.pathname === '/register') {
-        return;
-      }
-
+    if ((status === 401 || errorFetch) && location.pathname !== '/register') {
       localStorage.removeItem('usuarioInfo');
       navigate('/login', {
         replace: true
       });
     }
   }, [status, errorFetch, location.pathname]);
+
 
   return (
     <main>
