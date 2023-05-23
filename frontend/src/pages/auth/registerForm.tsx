@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { useForm } from '../../../hooks/useForm';
-import { useFetchPost } from '../../../hooks/useFetchPost';
+import { useForm } from '../../hooks/useForm';
+import { useFetchPost } from '../../hooks/useFetchPost';
 import { ICategoria } from '../../../interfaces/categoria.interface';
 
 interface ICategoriasFormProps {
