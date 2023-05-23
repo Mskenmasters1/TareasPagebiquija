@@ -36,15 +36,15 @@ export const RegisterPage = () => {
       <form onSubmit={onSubmit}>
         <div className="form-group">
           <label htmlFor="nombre">Nombre</label>
-          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} required />
+          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} required title="Introduzca su nombre"/>
         </div>
         <div className="form-group">
           <label htmlFor="correo">Correo electrónico</label>
-          <input className="form-control" id="correo" type="email" value={email} onChange={onInputChange} required />
+          <input className="form-control" id="correo" type="email" value={email} onChange={onInputChange} required title="Introduzca un correo electrónico"/>
         </div>
         <div className="form-group">
           <label htmlFor="clave">Contraseña</label>
-          <input className="form-control" id="clave" type="password" value={password} onChange={onInputChange} aria-invalid={password.length <6 ? 'true' : 'false'} aria-describedby="infoclave" required />
+          <input className="form-control" id="clave" type="password" value={password} onChange={onInputChange} aria-invalid={password.length <6 ? 'true' : 'false'} aria-describedby="infoclave" required title="Introduzca una contraseña"/>
           <div id="infoclave">
             {password.length <6 && 'Esta contraseña es muy corta. Debe tener 6 caracteres como mínimo.'}
           </div>
