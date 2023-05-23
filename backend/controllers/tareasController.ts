@@ -64,7 +64,7 @@ export const updateTarea = async (req: Request, res: Response) => {
     const tarea = await Tarea.findByIdAndUpdate(id, updates, { new: true });
 
     if (!tarea) {
-      return res.status(404).json({ error: "La tarea no fue encontrada." });
+      return res.status(404).json({ error: "La tarea no se ha encontrado." });
     }
 
     res.status(200).json(tarea);
@@ -80,10 +80,10 @@ export const deleteTarea = async (req: Request, res: Response) => {
     const tarea = await Tarea.findByIdAndUpdate(id, { estado: false }, { new: true });
 
     if (!tarea) {
-      return res.status(404).json({ error: "La tarea no fue encontrada." });
+      return res.status(404).json({ error: "La tarea no se ha encontrado." });
     }
 
-    res.status(200).json({ message: "La tarea ha sido eliminada con éxito." });
+    res.status(200).json({ message: "La tarea se ha eliminado con éxito." });
   } catch (error) {
     res.status(500).json({ error: "Ocurrió un error al eliminar la tarea." });
   }

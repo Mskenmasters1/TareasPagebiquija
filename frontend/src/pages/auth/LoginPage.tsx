@@ -41,7 +41,7 @@ export const LoginPage = () => {
         token: loginResponse.token
       };
       localStorage.setItem('usuarioInfo', JSON.stringify(infoUsuarioStorage));
-      navigate('/categorias', {
+      navigate('/', {
         replace: true
       });
     }

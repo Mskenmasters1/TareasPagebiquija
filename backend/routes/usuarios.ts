@@ -18,7 +18,7 @@ export const routerUsuarios = Router();
 // Si hay errores, validarCampos devolverá un error. Si no los hay, ejecutará el resto del controller (insertUsuario o updateUsuario)
 
 // En las peticiones, incluimos el middleware para comprobar el acceso de personas autenticadas
-routerUsuarios.get("/", [validarJWT], getUsuarios);
+routerUsuarios.get("/", getUsuarios);
 
 routerUsuarios.post(
 	"/",
