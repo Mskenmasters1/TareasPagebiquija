@@ -8,6 +8,7 @@ import { AppContext } from '../context/AppContext';
 import { useFetchGet } from '../hooks/useFetchGet';
 import { IRefreshToken } from '../interfaces/login.interface';
 import { HomePage } from '../pages/homePage';
+import { RegisterPage } from '../pages/auth/RegisterPage';
 
 export const AppRouter = () => {
   const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
@@ -46,7 +47,7 @@ export const AppRouter = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
-        <Route path="login/register" element={<RegisterPage />} />
+        <Route path="login" element={<RegisterPage />} />
 
         <Route path="/*" element={<TareasRoutes />} />
       </Routes>
