@@ -3,9 +3,7 @@ import { useForm } from '../../hooks/useForm';
 import { useFetchPost } from '../../hooks/useFetchPost';
 import { IUsuario } from '../../interfaces/usuario.interface';
 
-
-
-export const RegisterForm = () => {
+export const RegisterPage = () => {
   const [body, setBody] = useState<string>('');
   const { form, onInputChange } = useForm<IUsuario>({
     nombre: '',
