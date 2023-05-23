@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Tarea } from '../models/tarea';
+import { Usuario } from '../models/usuario';
 
 export const getTareas = async (req: Request, res: Response) => {
   try {
@@ -15,6 +16,13 @@ export const getTareasByUsuario = async (req: Request, res: Response) => {
   try {
     const { idUsuario } = req.params;
 
+    // Verificar el estado del usuario
+    const usuario = await Usuario.findById(idUsuario);
+    if (!usuario || !usuario.estado) {
+      return res.status(404).json({ error: "El usuario no existe o está desactivado." });
+    }
+
+    // Obtener las tareas del usuario
     const tareas = await Tarea.find({ usuario: idUsuario });
 
     if (tareas.length === 0) {
