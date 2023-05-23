@@ -43,7 +43,7 @@ export const RegisterForm = () => {
         </div>
         <div className="form-group">
           <label htmlFor="correo">Correo electrónico</label>
-          <input className="form-control" id="nombre" type="email" value={email} onChange={onInputChange} required />
+          <input className="form-control" id="correo" type="email" value={email} onChange={onInputChange} required />
         </div>
         <div className="form-group">
           <label htmlFor="clave">Contraseña</label>
