@@ -18,7 +18,7 @@ export const RegisterPage = () => {
     status,
     errorFetch,
     errorMsg
-  } = useFetchPost<IUsuario>('http://localhost:3000/api/usuarios', body);
+  } = useFetchPost<IUsuario>('http://localhost:3000/api/usuarios', body, false);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
