@@ -1,19 +1,19 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { useFetchPost } from '../../hooks/useFetchPost';
-import { ICategoria } from '../../../interfaces/categoria.interface';
+import { IUsuario } from '../../interfaces/usuario.interface';
 
-interface ICategoriasFormProps {
-  setRefreshCategorias: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-export const CategoriasForm = ({ setRefreshCategorias }: ICategoriasFormProps) => {
+
+export const RegisterForm = () => {
   const [body, setBody] = useState<string>('');
-  const { form, onInputChange } = useForm<ICategoria>({
-    nombre: ''
+  const { form, onInputChange } = useForm<IUsuario>({
+    nombre: '',
+    email: '',
+    password: ''
   });
 
-  const { nombre } = form;
+  const { nombre, email, password } = form;
 
   const {
     loading,
@@ -21,44 +21,55 @@ export const CategoriasForm = ({ setRefreshCategorias }: ICategoriasFormProps) =
     status,
     errorFetch,
     errorMsg
-  } = useFetchPost<ICategoria>('http://localhost:3000/api/categorias', body);
-
-  useEffect(() => {
-    if (status === 201 && !loading) {
-      setRefreshCategorias(true);
-    }
-    setBody('');
-  }, [loading]);
+  } = useFetchPost<IUsuario>('http://localhost:3000/api/usuarios', body);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const categoria: ICategoria = {
-      nombre: nombre
+    const usuario: IUsuario = {
+      nombre: nombre,
+      email: email,
+      password: password
     };
-    setBody(JSON.stringify(categoria));
+    setBody(JSON.stringify(usuario));
   };
 
   return (
     <>
+    <h1>Alta de usuario</h1>
       <form onSubmit={onSubmit}>
         <div className="form-group">
           <label htmlFor="nombre">Nombre</label>
-          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
-          {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
+          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} required />
         </div>
-        <button className="btn btn-success" type="submit" disabled={nombre.trim() === ''}>
-          Agregar categoría
+        <div className="form-group">
+          <label htmlFor="correo">Correo electrónico</label>
+          <input className="form-control" id="nombre" type="email" value={email} onChange={onInputChange} required />
+        </div>
+        <div className="form-group">
+          <label htmlFor="clave">Contraseña</label>
+          <input className="form-control" id="clave" type="password" value={password} onChange={onInputChange} aria-invalid={password.length <6 ? 'true' : 'false'} aria-describedby="infoclave" required />
+          <div id="infoclave">
+            {password.length <6 && 'Esta contraseña es muy corta. Debe tener 6 caracteres como mínimo.'}
+          </div>
+        </div>
+        <button className="btn btn-success" type="submit">
+          Registrarse
         </button>
       </form>
 
       {loading && (
-        <div className="alert alert-warning" role="alert">
-          Agregando categoría...
+        <div className="alert alert-warning" role="status" aria-live="polite">
+          Registrando...
         </div>
       )}
       {errorFetch && !loading && (
-        <div className="alert alert-danger" role="alert">
+        <div className="alert alert-danger" role="status" aria-live="polite">
           {errorMsg}
+        </div>
+      )}
+      {status === 201 && !loading && (
+        <div className="alert alert-success" role="status" aria-live="polite">
+          Registro efectuado con éxito.
         </div>
       )}
     </>
