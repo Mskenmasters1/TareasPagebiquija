@@ -40,7 +40,7 @@ export const AppRouter = () => {
         replace: true
       });
     }
-  }, [status, errorFetch, location.pathname]);
+  }, [status, errorFetch]);
 
 
   return (
