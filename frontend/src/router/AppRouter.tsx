@@ -41,13 +41,13 @@ export const AppRouter = () => {
   }, [status, errorFetch]);
 
   return (
-    <>
+    <main>
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="login" element={<LoginPage />} />
 
         <Route path="/*" element={<TareasRoutes />} />
       </Routes>
-    </>
+    </main>
   );
 };
