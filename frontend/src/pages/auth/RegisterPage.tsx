@@ -44,9 +44,9 @@ export const RegisterPage = () => {
         </div>
         <div className="form-group">
           <label htmlFor="clave">Contraseña</label>
-          <input className="form-control" id="clave" type="password" value={password} onChange={onInputChange} aria-invalid={password.length <6 ? 'true' : 'false'} aria-describedby="infoclave" required title="Introduzca una contraseña"/>
+          <input className="form-control" id="clave" type="password" value={password} onChange={onInputChange} aria-invalid={password.length >1 && password.length <6 ? 'true' : 'false'} aria-describedby="infoclave" required title="Introduzca una contraseña"/>
           <div id="infoclave">
-            {password.length <6 && 'Esta contraseña es muy corta. Debe tener 6 caracteres como mínimo.'}
+            {password.length >1 && password.length <6 && 'Esta contraseña es muy corta. Debe tener 6 caracteres como mínimo.'}
           </div>
         </div>
         <button className="btn btn-success" type="submit">
