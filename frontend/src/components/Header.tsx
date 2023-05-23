@@ -20,7 +20,7 @@ export const Header = () => {
     <>
       <header>
         <h1>          <Link className="navbar-brand" to="home">
-          Gestor de teareas
+          Gestor de tareas
         </Link>
         </h1>
         <nav className="navbar navbar-expand-sm navbar-dark bg-dark p-2">
@@ -28,13 +28,13 @@ export const Header = () => {
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav">
               <li className="nav-item active">
-                <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/crear-tarea">
-                  Crea una tarea
+                <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/mistareas">
+                  Mis tareas
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/mis-tareas">
-                  Mis tareas
+                <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/tareas/crear">
+                Crea una tarea
                 </NavLink>
               </li>
             </ul>
@@ -43,9 +43,8 @@ export const Header = () => {
         </nav>
         <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
 
-          <span className="nav-item nav-link text-primary">{usuarioInfo.nombre}</span>
           <button className="nav-item nav-link btn" onClick={logout}>
-            Cerrar sesión
+            Cerrar sesión de {usuarioInfo.nombre}
           </button>
 
 

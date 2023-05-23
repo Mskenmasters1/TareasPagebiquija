@@ -1,6 +1,6 @@
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { LoginPage } from '../pages/auth/LoginPage';
-import { AlmacenRoutes } from '../pages/almacen/AlmacenRouter';
+import { TareasRoutes as TareasRoutes } from '../pages/tareas/TareasRouter';
 import { useContext, useEffect } from 'react';
 import { ILocalStorageInfo } from '../interfaces/localStorage.interface';
 import { IUsuarioInfoContext } from '../interfaces/context.interface';
@@ -45,8 +45,8 @@ export const AppRouter = () => {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="login" element={<LoginPage />} />
-        {/* Cualquier otra ruta se desviará a AlmacenRoutes */}
-        <Route path="/*" element={<AlmacenRoutes />} />
+
+        <Route path="/*" element={<TareasRoutes />} />
       </Routes>
     </>
   );

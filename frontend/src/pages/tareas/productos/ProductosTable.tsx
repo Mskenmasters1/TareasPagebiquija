@@ -3,8 +3,6 @@ import { useFetchDelete } from '../../../hooks/useFetchDelete';
 import { IUsuario, IProducto, IProductoResponse } from '../../../interfaces/tarea.interface';
 import Modal from 'react-bootstrap/Modal';
 import { ProductosModal } from './ProductosModal';
-import { useFetchFileUpload } from '../../../hooks/useFetchFileUpload';
-import { useFetchFileDownload } from '../../../hooks/useFetchFileDownload';
 
 interface IProductosTableProps {
   productosResponse: IProductoResponse;

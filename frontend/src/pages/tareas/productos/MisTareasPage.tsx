@@ -4,7 +4,7 @@ import { useFetchGet } from '../../../hooks/useFetchGet';
 import { ProductosTable } from './ProductosTable';
 import { ProductosForm } from './ProductosForm';
 
-export const ProductosPage = () => {
+export const MisTareasPage = () => {
   const [refreshProductos, setRefreshProductos] = useState<boolean>(true);
   const {
     loading,
