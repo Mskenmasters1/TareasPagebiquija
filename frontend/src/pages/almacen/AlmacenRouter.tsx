@@ -1,12 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Navbar } from '../../components/Navbar';
+import { Header } from '../../components/Header';
 import { CategoriasPage } from './categorias/CategoriasPage';
 import { ProductosPage } from './productos/ProductosPage';
 
 export const AlmacenRoutes = () => {
   return (
     <>
-      <Navbar />
+      <Header />
 
       <div className="container">
         <Routes>

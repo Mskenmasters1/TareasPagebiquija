@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import { IUsuarioInfoContext } from '../interfaces/context.interface';
 
-export const Navbar = () => {
+export const Header = () => {
   const { usuarioInfo, setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
   const navigate = useNavigate();
 
