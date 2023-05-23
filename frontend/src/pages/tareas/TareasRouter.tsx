@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Header } from '../../components/Header';
-import { MisTareasPage } from './productos/MisTareasPage';
+import { MisTareasPage } from './misTareas/MisTareasPage';
 
 export const TareasRoutes = () => {
   return (
