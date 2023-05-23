@@ -19,8 +19,8 @@ export const Header = () => {
   return (
     <>
       <header>
-        <h1>          <Link className="navbar-brand" to="home">
-          Gestor de tareas
+        <h1>          <Link className="navbar-brand" to="/">
+          Gestor de tareas <span className="visually-hidden">(Ir a la página de inicio)</span>
         </Link>
         </h1>
         <nav className="navbar navbar-expand-sm navbar-dark bg-dark p-2">
@@ -34,23 +34,17 @@ export const Header = () => {
               </li>
               <li className="nav-item">
                 <NavLink className={({ isActive }) => `nav-item nav-link  ${isActive ? 'active' : ''}`} to="/tareas/crear">
-                Crea una tarea
+                  Crea una tarea
                 </NavLink>
               </li>
             </ul>
           </div>
-
         </nav>
         <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
-
           <button className="nav-item nav-link btn" onClick={logout}>
             Cerrar sesión de {usuarioInfo.nombre}
           </button>
-
-
         </div>
-
-
       </header>
     </>
   );
