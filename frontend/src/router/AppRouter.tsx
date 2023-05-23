@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { LoginPage } from '../pages/auth/LoginPage';
 import { TareasRoutes as TareasRoutes } from '../pages/tareas/TareasRouter';
 import { useContext, useEffect } from 'react';
@@ -13,7 +13,7 @@ import { HomePage } from '../pages/HomePage';
 export const AppRouter = () => {
   const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
   const navigate = useNavigate();
-
+  const location = useLocation();
   const {
     data: newTokenInfo,
     errorFetch,
@@ -34,13 +34,21 @@ export const AppRouter = () => {
   }, [newTokenInfo]);
 
   useEffect(() => {
+
+
+
     if (status === 401 || errorFetch) {
+
+      if (location.pathname === '/register') {
+        return;
+      }
+
       localStorage.removeItem('usuarioInfo');
       navigate('/login', {
         replace: true
       });
     }
-  }, [status, errorFetch]);
+  }, [status, errorFetch, location.pathname]);
 
   return (
     <main>
@@ -48,7 +56,7 @@ export const AppRouter = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-    
+
         <Route path="/*" element={<TareasRoutes />} />
       </Routes>
     </main>
