@@ -1,8 +1,9 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { useFetchPost } from '../../hooks/useFetchPost';
 import { IUsuario } from '../../interfaces/usuario.interface';
 import { Link } from 'react-router-dom';
+import { aplicacion } from '../MainApp';
 
 export const RegisterPage = () => {
   const [body, setBody] = useState<string>('');
@@ -40,6 +41,9 @@ export const RegisterPage = () => {
     setBody(JSON.stringify(usuario));
   };
 
+  useEffect(() => {
+    document.title = 'Registro - ' + aplicacion;
+  }, []);
   return (
     <>
       <h1>Alta de usuario</h1>
