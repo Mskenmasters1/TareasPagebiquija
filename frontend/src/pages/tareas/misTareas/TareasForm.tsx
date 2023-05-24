@@ -59,7 +59,7 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
         </div>
         <div className="form-group">
           <label htmlFor="fecha">Fecha de creación</label>
-          <input className="form-control" id="fecha" type="date" value={fecha} onChange={onInputChange} />
+          <input className="form-control" id="fecha" type="date" required value={fecha} onChange={onInputChange} />
         </div>
 
         <ComboCategorias setSelected={onSelectChange} />
@@ -69,7 +69,7 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
         </div>
         <div className="form-group">
           <label htmlFor="observaciones">Observaciones</label>
-          <textarea className="form-control" id="observaciones" value={observaciones} onChange={onInputChange} />
+          <textarea className="form-control" id="observaciones" value={observaciones} onChange={onInputChange}></textarea>
         </div>
 
         <div className="form-check">
@@ -84,8 +84,8 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
             Terminada
           </label>
         </div>
-        <button className="btn btn-success" type="submit" disabled={titulo.trim() === ''}>
-          Agregar tarea
+        <button className="btn btn-success" type="submit">
+          Guardar tarea
         </button>
       </form>
 
