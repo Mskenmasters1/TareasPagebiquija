@@ -4,11 +4,11 @@ import { useFetchPost } from '../../../hooks/useFetchPost';
 import { IProducto } from '../../../interfaces/tarea.interface';
 import { ComboCategorias } from '../../../components/ComboCategorias';
 
-interface IProductosFormProps {
-  setRefreshProductos: React.Dispatch<React.SetStateAction<boolean>>;
+interface ITareasFormProps {
+  setRefreshTareas: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ProductosForm = ({ setRefreshProductos }: IProductosFormProps) => {
+export const ProductosForm = ({ setRefreshTareas: setRefreshProductos }: ITareasFormProps) => {
   const [body, setBody] = useState<string>('');
   const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<IProducto>({
     titulo: '',

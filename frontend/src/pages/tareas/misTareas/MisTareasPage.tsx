@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { IProductoResponse } from '../../../interfaces/tarea.interface';
 import { useFetchGet } from '../../../hooks/useFetchGet';
 import { ProductosTable } from './ProductosTable';
-import { ProductosForm } from './ProductosForm';
+import { ProductosForm } from './TareasForm';
 
 export const MisTareasPage = () => {
   const [refreshProductos, setRefreshProductos] = useState<boolean>(true);
@@ -25,7 +25,7 @@ export const MisTareasPage = () => {
       <hr />
       <div className="row">
         <div className="col-3">
-          <ProductosForm setRefreshProductos={setRefreshProductos} />
+          <ProductosForm setRefreshTareas={setRefreshProductos} />
         </div>
         <div className="col">
           {productosResponse && (
