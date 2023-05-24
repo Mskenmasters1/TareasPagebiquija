@@ -13,6 +13,8 @@ export const RegisterPage = () => {
   });
 
   const { nombre, email, password } = form;
+  const [repeatPassword, setRepeatPassword] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
 
   const {
     loading,
@@ -23,6 +25,13 @@ export const RegisterPage = () => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (password !== repeatPassword) {
+      setPasswordError('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
+      return;
+    }
+    setPasswordError('');
+
     const usuario: IUsuario = {
       nombre: nombre,
       email: email,
@@ -33,23 +42,32 @@ export const RegisterPage = () => {
 
   return (
     <>
-    <h1>Alta de usuario</h1>
+      <h1>Alta de usuario</h1>
       <form onSubmit={onSubmit}>
         <div className="form-group">
           <label htmlFor="nombre">Nombre</label>
-          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} required title="Introduzca su nombre"/>
+          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} required title="Introduzca su nombre" />
         </div>
         <div className="form-group">
           <label htmlFor="email">Correo electrónico</label>
-          <input className="form-control" id="email" type="email" value={email} onChange={onInputChange} required title="Introduzca un correo electrónico"/>
+          <input className="form-control" id="email" type="email" value={email} onChange={onInputChange} required title="Introduzca un correo electrónico" />
         </div>
         <div className="form-group">
           <label htmlFor="password">Contraseña</label>
-          <input className="form-control" id="password" type="password" value={password} onChange={onInputChange} aria-invalid={password.length >1 && password.length <6 ? 'true' : 'false'} aria-describedby="infoclave" required title="Introduzca una contraseña"/>
+          <input className="form-control" id="password" type="password" value={password} onChange={onInputChange} aria-invalid={password.length > 1 && password.length < 6 ? 'true' : 'false'} aria-describedby="infoclave" required title="Introduzca una contraseña" />
           <div id="infoclave">
-            {password.length >1 && password.length <6 && 'Esta contraseña es muy corta. Debe tener 6 caracteres como mínimo.'}
-          </div>
+            {password.length > 1 && password.length < 6 && 'Esta contraseña es muy corta. Debe tener 6 caracteres como mínimo.'}
         </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="repeatPassword">Confirmación de contraseña</label>
+          <input className="form-control" id="repeatPassword" type="password" value={repeatPassword} onChange={(e) => { setRepeatPassword(e.target.value); setPasswordError(''); }} aria-invalid={password.length > 1 && password.length < 6 ? 'true' : 'false'} required title="Repita la contraseña" />
+        </div>
+        {passwordError && (
+          <div className="alert alert-danger" role="status" aria-live="polite">
+            {passwordError}
+          </div>
+        )}
         <button className="btn btn-success" type="submit">
           Registrarse
         </button>
@@ -71,7 +89,7 @@ export const RegisterPage = () => {
         </div>
       )}
 
-<p>
+      <p>
         ¿Ya tiene cuenta?{' '}
         <Link to="/login">Inicie sesión</Link>
       </p>
