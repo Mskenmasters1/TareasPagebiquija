@@ -7,7 +7,7 @@ export const useForm = <T>(initialForm: T) => {
 
   // Al cambiar cualquier campo, este se modifica y gracias a setForm se genera un nuevo estado del formulario.
   // Este nuevo estado tendrá todas las propiedades del formulario (...form) y el valor del campo modificado ([id]) con el nuevo valor (value)
-  const onInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+  const onInputChange = ({ target }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = target;
     setForm({
       ...form,

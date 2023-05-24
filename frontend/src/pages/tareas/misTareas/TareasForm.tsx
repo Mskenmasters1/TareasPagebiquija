@@ -4,15 +4,12 @@ import { useFetchPost } from '../../../hooks/useFetchPost';
 import { ComboUsuarios } from '../../../components/ComboUsuarios';
 import { ITarea } from '../../../interfaces/tarea.interface';
 
-interface ITareasFormProps {
-  setRefreshTareas: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormProps) => {
+export const TareasForm = () => {
   const [body, setBody] = useState<string>('');
   const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<ITarea>({
     titulo: '',
-    terminada: true,
+    terminada: false,
     descripcion: '',
     observaciones: '',
     fecha: '',
@@ -23,7 +20,6 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
 
   const {
     loading,
-    data: response,
     status,
     errorFetch,
     errorMsg
@@ -32,7 +28,6 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
   useEffect(() => {
     if (status === 201 && !loading) {
       onResetForm;
-      setRefreshTareas(true);
     }
     setBody('');
   }, [loading]);
@@ -59,7 +54,7 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
         </div>
         <div className="form-group">
           <label htmlFor="fecha">Fecha de creación</label>
-          <input className="form-control" id="fecha" type="date" value={fecha} onChange={onInputChange} />
+          <input className="form-control" id="fecha" type="date" required value={fecha} onChange={onInputChange} />
         </div>
 
         <ComboUsuarios setSelected={onSelectChange} />
@@ -69,7 +64,7 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
         </div>
         <div className="form-group">
           <label htmlFor="observaciones">Observaciones</label>
-          <textarea className="form-control" id="observaciones" value={observaciones} onChange={onInputChange} />
+          <textarea className="form-control" id="observaciones" value={observaciones} onChange={onInputChange}></textarea>
         </div>
 
         <div className="form-check">
@@ -84,20 +79,25 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
             Terminada
           </label>
         </div>
-        <button className="btn btn-success" type="submit" disabled={titulo.trim() === ''}>
-          Agregar tarea
+        <button className="btn btn-success" type="submit">
+          Guardar tarea
         </button>
       </form>
 
       {loading && (
-        <div className="alert alert-warning" role="alert">
-          Agregando tarea...
+        <div className="alert alert-warning" role="status" aria-live="polite">
+          Guardando tarea...
         </div>
       )}
       {errorFetch && !loading && (
-        <div className="alert alert-danger" role="alert">
+        <div className="alert alert-danger" role="status" aria-live='polite'>
           {errorMsg}
         </div>
+      )}
+      {(status === 200 || status === 201) && !loading && (
+        <div className='alert alert-success' role='status' aria-live='polite'>
+          Tarea guardada.
+          </div>
       )}
     </>
   );
