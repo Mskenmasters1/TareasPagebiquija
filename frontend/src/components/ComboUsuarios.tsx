@@ -2,12 +2,12 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { ICategoria, ICategoriaResponse } from '../interfaces/categoria.interface';
 import { useFetchGet } from '../hooks/useFetchGet';
 
-interface IComboCategoriasProps {
+interface IComboUsuariosProps {
   setSelected: ({ target }: React.ChangeEvent<HTMLSelectElement>) => void;
   activa?: string;
 }
 
-export const ComboCategorias = ({ setSelected, activa }: IComboCategoriasProps) => {
+export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
   const [categorias, setCategorias] = useState<ICategoria[]>([]);
   const { loading, data, status, errorFetch } = useFetchGet<ICategoriaResponse>(
     'http://localhost:3000/api/categorias',

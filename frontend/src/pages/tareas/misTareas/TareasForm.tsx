@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPost } from '../../../hooks/useFetchPost';
-import { ComboCategorias } from '../../../components/ComboCategorias';
+import { ComboUsuarios } from '../../../components/ComboUsuarios';
 import { ITarea } from '../../../interfaces/tarea.interface';
 
 interface ITareasFormProps {
@@ -62,7 +62,7 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
           <input className="form-control" id="fecha" type="date" value={fecha} onChange={onInputChange} />
         </div>
 
-        <ComboCategorias setSelected={onSelectChange} />
+        <ComboUsuarios setSelected={onSelectChange} />
         <div className="form-group">
           <label htmlFor="descripcion">Descripción</label>
           <input className="form-control" id="descripcion" type="text" value={descripcion} onChange={onInputChange} />

@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPut } from '../../../hooks/useFetchPut';
 import { IUsuario, IProducto } from '../../../interfaces/tarea.interface';
-import { ComboCategorias } from '../../../components/ComboCategorias';
+import { ComboUsuarios } from '../../../components/ComboUsuarios';
 
 interface IProductosModalProps {
   producto: IProducto;
@@ -69,7 +69,7 @@ export const ProductosModal = ({ producto, setShow, setRefreshProductos, show }:
               <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
               {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
             </div>
-            <ComboCategorias setSelected={onSelectChange} activa={(categoria as IUsuario)._id} />
+            <ComboUsuarios setSelected={onSelectChange} activa={(categoria as IUsuario)._id} />
             <div className="form-group">
               <label htmlFor="descripcion">Descripción</label>
               <input
