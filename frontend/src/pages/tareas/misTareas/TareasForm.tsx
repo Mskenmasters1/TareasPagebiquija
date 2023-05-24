@@ -1,8 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPost } from '../../../hooks/useFetchPost';
-import { IProducto as ITarea } from '../../../interfaces/tarea.interface';
 import { ComboCategorias } from '../../../components/ComboCategorias';
+import { ITarea } from '../../../interfaces/tarea.interface';
 
 interface ITareasFormProps {
   setRefreshTareas: React.Dispatch<React.SetStateAction<boolean>>;
@@ -54,41 +54,44 @@ export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormPr
     <>
       <form onSubmit={onSubmit}>
         <div className="form-group">
-          <label htmlFor="titulo">Titulo</label>
+          <label htmlFor="titulo">Título</label>
           <input className="form-control" id="titulo" required type="text" value={titulo} onChange={onInputChange} />
-          {titulo.trim() === ''}
         </div>
+        <div className="form-group">
+          <label htmlFor="fecha">Fecha de creación</label>
+          <input className="form-control" id="fecha" type="date" value={fecha} onChange={onInputChange} />
+        </div>
+
         <ComboCategorias setSelected={onSelectChange} />
         <div className="form-group">
           <label htmlFor="descripcion">Descripción</label>
           <input className="form-control" id="descripcion" type="text" value={descripcion} onChange={onInputChange} />
-          {descripcion.trim() === '' && <small className="text-danger">Descripción obligatoria</small>}
         </div>
         <div className="form-group">
-          <label htmlFor="precio">Precio</label>
-          <input className="form-control" id="precio" type="number" value={precio} onChange={onInputChange} />
-          {precio.toString() === '' && <small className="text-danger">Precio obligatorio</small>}
+          <label htmlFor="observaciones">Observaciones</label>
+          <textarea className="form-control" id="observaciones" value={observaciones} onChange={onInputChange} />
         </div>
+
         <div className="form-check">
           <input
             className="form-check-input"
             type="checkbox"
-            id="disponible"
+            id="terminada"
             checked={terminada}
             onChange={onCheckBoxChange}
           />
-          <label className="form-check-label" htmlFor="disponible">
-            Disponible
+          <label className="form-check-label" htmlFor="terminada">
+            Terminada
           </label>
         </div>
         <button className="btn btn-success" type="submit" disabled={titulo.trim() === ''}>
-          Agregar producto
+          Agregar tarea
         </button>
       </form>
 
       {loading && (
         <div className="alert alert-warning" role="alert">
-          Agregando producto...
+          Agregando tarea...
         </div>
       )}
       {errorFetch && !loading && (
