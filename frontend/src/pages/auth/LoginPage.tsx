@@ -6,6 +6,7 @@ import { ILogin, ILoginResponse } from '../../interfaces/login.interface';
 import { IUsuarioInfoContext } from '../../interfaces/context.interface';
 import { ILocalStorageInfo } from '../../interfaces/localStorage.interface';
 import { useFetchPost } from '../../hooks/useFetchPost';
+import { aplicacion } from '../MainApp';
 
 export const LoginPage = () => {
   // Nos traemos el contexto con el usuario y la función que lo cambia
@@ -46,7 +47,9 @@ export const LoginPage = () => {
       });
     }
   }, [status, errorMsg]);
-
+useEffect(() => {
+  document.title = 'Inicio de sesión' + aplicacion;
+}, []);
   return (
     <>
       <h1>Inicio de sesión</h1>
