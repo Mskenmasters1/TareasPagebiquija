@@ -1,24 +1,25 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPost } from '../../../hooks/useFetchPost';
-import { IProducto } from '../../../interfaces/tarea.interface';
+import { IProducto as ITarea } from '../../../interfaces/tarea.interface';
 import { ComboCategorias } from '../../../components/ComboCategorias';
 
 interface ITareasFormProps {
   setRefreshTareas: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ProductosForm = ({ setRefreshTareas: setRefreshProductos }: ITareasFormProps) => {
+export const TareasForm = ({ setRefreshTareas: setRefreshTareas }: ITareasFormProps) => {
   const [body, setBody] = useState<string>('');
-  const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<IProducto>({
+  const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<ITarea>({
     titulo: '',
     terminada: true,
     descripcion: '',
-    precio: 0,
+    observaciones: '',
+    fecha: '',
     usuario: ''
   });
 
-  const { titulo: nombre, usuario: categoria, descripcion, terminada: disponible, precio } = form;
+  const { titulo: titulo, usuario: categoria, descripcion, terminada: terminada, fecha, observaciones } = form;
 
   const {
     loading,
@@ -26,35 +27,36 @@ export const ProductosForm = ({ setRefreshTareas: setRefreshProductos }: ITareas
     status,
     errorFetch,
     errorMsg
-  } = useFetchPost<IProducto>('http://localhost:3000/api/productos', body);
+  } = useFetchPost<ITarea>('http://localhost:3000/api/tareas', body);
 
   useEffect(() => {
     if (status === 201 && !loading) {
       onResetForm;
-      setRefreshProductos(true);
+      setRefreshTareas(true);
     }
     setBody('');
   }, [loading]);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const producto: IProducto = {
-      titulo: nombre,
+    const tarea: ITarea = {
+      titulo: titulo,
+      fecha: fecha,
+      observaciones: observaciones,
       descripcion: descripcion,
       usuario: categoria,
-      terminada: disponible,
-      precio: precio
+      terminada: terminada,
     };
-    setBody(JSON.stringify(producto));
+    setBody(JSON.stringify(tarea));
   };
 
   return (
     <>
       <form onSubmit={onSubmit}>
         <div className="form-group">
-          <label htmlFor="nombre">Nombre</label>
-          <input className="form-control" id="nombre" type="text" value={nombre} onChange={onInputChange} />
-          {nombre.trim() === '' && <small className="text-danger">Nombre obligatorio</small>}
+          <label htmlFor="titulo">Titulo</label>
+          <input className="form-control" id="titulo" required type="text" value={titulo} onChange={onInputChange} />
+          {titulo.trim() === ''}
         </div>
         <ComboCategorias setSelected={onSelectChange} />
         <div className="form-group">
@@ -72,14 +74,14 @@ export const ProductosForm = ({ setRefreshTareas: setRefreshProductos }: ITareas
             className="form-check-input"
             type="checkbox"
             id="disponible"
-            checked={disponible}
+            checked={terminada}
             onChange={onCheckBoxChange}
           />
           <label className="form-check-label" htmlFor="disponible">
             Disponible
           </label>
         </div>
-        <button className="btn btn-success" type="submit" disabled={nombre.trim() === ''}>
+        <button className="btn btn-success" type="submit" disabled={titulo.trim() === ''}>
           Agregar producto
         </button>
       </form>
