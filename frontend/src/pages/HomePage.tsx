@@ -9,7 +9,6 @@ useEffect(() => {
   return (
     <>
       <Header />
-      <hr />
       <p>Bienvenido al gestor de tareas</p>
     </>
   );

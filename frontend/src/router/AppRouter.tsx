@@ -44,7 +44,7 @@ export const AppRouter = () => {
 
 
   return (
-    <main>
+    <main className='container mt-2'>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
