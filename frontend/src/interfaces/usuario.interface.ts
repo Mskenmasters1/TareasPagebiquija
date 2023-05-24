@@ -5,3 +5,4 @@ export interface IUsuario {
   password: string;
   estado?: boolean;
 }
+

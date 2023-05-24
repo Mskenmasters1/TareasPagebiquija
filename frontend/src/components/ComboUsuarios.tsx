@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { ICategoria as IUsuario, ICategoriaResponse as IUsuarioResponse } from '../interfaces/categoria.interface';
 import { useFetchGet } from '../hooks/useFetchGet';
+import { IComboUsuarios, IComboUsuariosResponse } from '../interfaces/comboUsuarios.interface';
 
 interface IComboUsuariosProps {
   setSelected: ({ target }: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -8,18 +8,17 @@ interface IComboUsuariosProps {
 }
 
 export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
-  const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
-  const { loading, data, status, errorFetch } = useFetchGet<IUsuarioResponse>(
+  const [usuarios, setUsuarios] = useState<IComboUsuarios[]>([]);
+  const { loading, data, status, errorFetch } = useFetchGet<IComboUsuariosResponse>(
     'http://localhost:3000/api/usuarios',
     true
   );
 
   useEffect(() => {
     if (status === 200) {
-      setUsuarios([{ nombre: 'Elige un usuario', _id: '' }, ...data.usuarios]);
+      setUsuarios([{ nombre: 'Asignar a', _id: '' }, ...data.usuarios]);
     }
   }, [status]);
-
   const selectedUsuario = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelected(e);
   };
