@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { ICategoria, ICategoriaResponse } from '../interfaces/categoria.interface';
+import { ICategoria as IUsuario, ICategoriaResponse as IUsuarioResponse } from '../interfaces/categoria.interface';
 import { useFetchGet } from '../hooks/useFetchGet';
 
 interface IComboUsuariosProps {
@@ -8,33 +8,34 @@ interface IComboUsuariosProps {
 }
 
 export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
-  const [categorias, setCategorias] = useState<ICategoria[]>([]);
-  const { loading, data, status, errorFetch } = useFetchGet<ICategoriaResponse>(
-    'http://localhost:3000/api/categorias',
+  const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
+  const { loading, data, status, errorFetch } = useFetchGet<IUsuarioResponse>(
+    'http://localhost:3000/api/usuarios',
     true
   );
 
   useEffect(() => {
     if (status === 200) {
-      setCategorias([{ nombre: 'Elige una categoría', _id: '' }, ...data.categorias]);
+      setUsuarios([{ nombre: 'Elige un usuario', _id: '' }, ...data.usuarios]);
     }
   }, [status]);
 
-  const selectedCategoria = (e: ChangeEvent<HTMLSelectElement>) => {
+  const selectedUsuario = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelected(e);
   };
 
   return (
     <>
-      {categorias && status === 200 && (
+      {usuarios && status === 200 && (
         <select
           className="form-select"
-          aria-label="Categorías"
-          id="categoria"
-          onChange={selectedCategoria}
+          label-for='Asignar a'
+          required
+          id="usuario"
+          onChange={selectedUsuario}
           value={activa}
         >
-          {categorias.map((x, i) => (
+          {usuarios.map((x, i) => (
             <option key={x._id} value={x._id}>
               {x.nombre}
             </option>
