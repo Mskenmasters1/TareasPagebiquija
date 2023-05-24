@@ -9,6 +9,8 @@ import { useFetchGet } from '../hooks/useFetchGet';
 import { IRefreshToken } from '../interfaces/login.interface';
 import { RegisterPage } from '../pages/auth/RegisterPage';
 import { HomePage } from '../pages/HomePage';
+import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
 
 export const AppRouter = () => {
   const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
@@ -44,14 +46,18 @@ export const AppRouter = () => {
 
 
   return (
-    <main className='container mt-2'>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+    <>
+{location.pathname !== '/register' && location.pathname !== '/login' && <Header />}
+      <main className='container mt-2'>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        <Route path="/*" element={<TareasRoutes />} />
-      </Routes>
-    </main>
+          <Route path="/*" element={<TareasRoutes />} />
+        </Routes>
+      </main>
+      {location.pathname !== '/register' && location.pathname !== '/login' && <Footer />}
+    </>
   );
 };

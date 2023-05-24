@@ -6,7 +6,7 @@ import { Footer } from '../../components/Footer';
 export const TareasRoutes = () => {
   return (
     <>
-      <Header />
+
 
       <div className="container">
         <Routes>
@@ -17,7 +17,7 @@ export const TareasRoutes = () => {
         </Routes>
       </div>
 
-<Footer />
+
     </>
   );
 };
