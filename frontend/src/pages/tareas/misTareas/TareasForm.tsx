@@ -95,7 +95,9 @@ export const TareasForm = () => {
         </div>
       )}
       {(status === 200 || status === 201) && !loading && (
-        <div>Tarea guardada.</div>
+        <div className='alert alert-success' role='status' aria-live='polite'>
+          Tarea guardada.
+          </div>
       )}
     </>
   );
