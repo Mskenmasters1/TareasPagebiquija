@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Header } from "../components/Header";
 import { aplicacion } from "./MainApp";
+import { Footer } from "../components/Footer";
 
 export const HomePage = () => {
 useEffect(() => {
@@ -10,6 +11,8 @@ useEffect(() => {
     <>
       <Header />
       <p>Bienvenido al gestor de tareas</p>
+      
+      <Footer />
     </>
   );
 };

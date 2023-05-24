@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Header } from '../../components/Header';
 import { MisTareasPage } from './misTareas/MisTareasPage';
+import { Footer } from '../../components/Footer';
 
 export const TareasRoutes = () => {
   return (
@@ -15,6 +16,8 @@ export const TareasRoutes = () => {
           <Route path="/*" element={<Navigate to="tareas" />} />
         </Routes>
       </div>
+
+<Footer />
     </>
   );
 };
