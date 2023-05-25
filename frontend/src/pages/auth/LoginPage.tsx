@@ -48,7 +48,7 @@ export const LoginPage = () => {
     }
   }, [status, errorMsg]);
 useEffect(() => {
-  document.title = 'Inicio de sesión' + aplicacion;
+  document.title = 'Inicio de sesión - ' + aplicacion;
 }, []);
   return (
     <>
