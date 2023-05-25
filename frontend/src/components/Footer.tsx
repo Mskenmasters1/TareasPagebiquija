@@ -7,8 +7,8 @@ export const Footer = () => {
 					<div className="row">
 						<div className="col">
 							<p>&copy; {currentYear} Gestor de Tareas. Proyecto realizado por Bilal, Pablo, Quico, Javi, Georgiana.</p>
-							<p>Accede al <a href="https://github.com/Mskenmasters1/TareasPagebiquija" target="_blank">
-								repositorio del gestor de tareas
+							<p> <a href="https://github.com/Mskenmasters1/TareasPagebiquija" target="_blank">
+							Accede al repositorio del gestor de tareas
 							</a></p>
 						</div>
 					</div>
