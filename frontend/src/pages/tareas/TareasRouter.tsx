@@ -7,18 +7,11 @@ import { EditorDeTareasPage } from './misTareas/EditorDeTareasPage';
 export const TareasRoutes = () => {
   return (
     <>
-
-
-      <div className="container">
         <Routes>
           <Route path="mistareas" element={<MisTareasPage />} />
           <Route path="tareas/crear" element={<EditorDeTareasPage />} />
-
           <Route path="/*" element={<Navigate to="tareas" />} />
         </Routes>
-      </div>
-
-
     </>
   );
 };
