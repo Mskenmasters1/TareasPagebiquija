@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { IProductoResponse } from '../../../interfaces/tarea.interface';
+import { ITareaResponse } from '../../../interfaces/tarea.interface';
 import { useFetchGet } from '../../../hooks/useFetchGet';
-import { ProductosTable } from './ProductosTable';
 import { TareasForm } from './TareasForm';
 
 export const MisTareasPage = () => {
