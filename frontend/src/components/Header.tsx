@@ -20,7 +20,7 @@ export const Header = () => {
     <>
       <header>
         <h1>          <Link className="navbar-brand" to="/">
-          Gestor de tareas <span className="visually-hidden">(Ir a la página de inicio)</span>
+Gestor de tareas<span className="oculto-visualmente">  (Ir a la página de inicio)</span>
         </Link>
         </h1>
         <nav className="navbar navbar-expand-sm navbar-dark bg-dark p-2">
