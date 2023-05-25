@@ -9,15 +9,15 @@ interface IComboUsuariosProps {
 
 export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 	const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
-	const { data, status } =
-		useFetchGet<IUsuario>(
-			"http://localhost:3000/api/usuarios",
-			true
-		);
+	const { data, status } = useFetchGet<IUsuario[]>(
+		"http://localhost:3000/api/usuarios",
+		true
+	);
 
 	useEffect(() => {
 		if (status === 200) {
-			setUsuarios([data]);
+			setUsuarios(data);
+			console.log(data[0]);
 		}
 	}, [status]);
 	const selectedUsuario = (e: ChangeEvent<HTMLSelectElement>) => {
