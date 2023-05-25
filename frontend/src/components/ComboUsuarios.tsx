@@ -28,7 +28,7 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 		<>
 			{usuarios && status === 200 && (
 				<>
-					<label htmlFor="usuarios">Asignar a:</label>
+					<label htmlFor="usuario">Asignar a:</label>
 					<select
 						className="form-select"
 						required
