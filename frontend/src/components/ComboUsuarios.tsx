@@ -15,7 +15,7 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 		"http://localhost:3000/api/usuarios",
 		true
 	);
-	const { usuarioInfo, setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
+	const { usuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
 
 	useEffect(() => {
 		if (status === 200) {
@@ -40,7 +40,7 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 						onChange={selectedUsuario}
 						value={activa}
 					>
-						{usuarios.map((x) => {
+						{usuarios.map((x) => (
 							x.nombre === usuarioInfo.nombre ? (
 									<option key={x._id} value={x._id} selected>
 										A mí
@@ -49,7 +49,7 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 						: (
 								<option id={x._id} value={x._id}>{x.nombre}</option>
 						)
-						})}
+						))}
 					</select>
 				</>
 			)}
