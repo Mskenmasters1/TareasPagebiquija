@@ -17,8 +17,8 @@ export const TareasForm = () => {
     fecha: '',
     usuario: ''
   });
-
-  const { titulo: titulo, usuario: categoria, descripcion, terminada: terminada, fecha, observaciones } = form;
+  const { titulo, usuario, descripcion, terminada, fecha, observaciones } = form;
+  console.log(usuario)
 
   const {
     loading,
@@ -41,7 +41,7 @@ export const TareasForm = () => {
       fecha: fecha,
       observaciones: observaciones,
       descripcion: descripcion,
-      usuario: categoria,
+      usuario: usuario,
       terminada: terminada,
     };
     setBody(JSON.stringify(tarea));

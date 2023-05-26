@@ -16,7 +16,7 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 		true
 	);
 	const { usuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
-
+console.log(usuarioInfo)
 	useEffect(() => {
 		if (status === 200) {
 			setUsuarios(data);
@@ -26,6 +26,7 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 
 	const selectedUsuario = (e: ChangeEvent<HTMLSelectElement>) => {
 		setSelected(e);
+		console.log(e);
 	};
 
 	return (
@@ -38,16 +39,16 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 						required
 						id="usuario"
 						onChange={selectedUsuario}
-						value={activa}
+						value={usuarioInfo._id}
 					>
 						{usuarios.map((x) => (
 							x.nombre === usuarioInfo.nombre ? (
-									<option key={x._id} value={x._id} selected>
+									<option key={x._id} value={x._id}>
 										A mí
 									</option>
 						)
 						: (
-								<option id={x._id} value={x._id}>{x.nombre}</option>
+								<option key={x._id} value={x._id}>{x.nombre}</option>
 						)
 						))}
 					</select>
