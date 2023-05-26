@@ -4,7 +4,8 @@ import { createContext } from 'react';
 import { IUsuarioInfo, IUsuarioInfoContext } from '../interfaces/context.interface';
 
 // Comenzamos con un usuario vacío
-const usuarioInfo: IUsuarioInfo = {
+const usuarioInfo: IUsuarioInfo = { ''
+  _id:,
   nombre: ''
 };
 
