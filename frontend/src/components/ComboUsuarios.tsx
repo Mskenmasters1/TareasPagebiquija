@@ -40,17 +40,15 @@ export const ComboUsuarios = ({ setSelected, activa }: IComboUsuariosProps) => {
 						onChange={selectedUsuario}
 						value={activa}
 					>
-						<option value={usuarioInfo.nombre} selected >{usuarioInfo.nombre}</option>
 						{usuarios.map((x) => {
-							if (x.nombre !== usuarioInfo.nombre) {
-								return (
-									<option key={x._id} value={x._id}>
-										{x.nombre}
+							x.nombre === usuarioInfo.nombre ? (
+									<option key={x._id} value={x._id} selected>
+										A mí
 									</option>
-								);
-							} else {
-								return null; // No mostrar el nombre del usuario del contexto en el map
-							}
+						)
+						: (
+								<option id={x._id} value={x._id}>{x.nombre}</option>
+						)
 						})}
 					</select>
 				</>
