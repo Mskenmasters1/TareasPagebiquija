@@ -1,8 +1,10 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useContext, useEffect, useState } from 'react';
 import { useForm } from '../../../hooks/useForm';
 import { useFetchPost } from '../../../hooks/useFetchPost';
 import { ComboUsuarios } from '../../../components/ComboUsuarios';
 import { ITarea } from '../../../interfaces/tarea.interface';
+import { IUsuarioInfoContext } from '../../../interfaces/context.interface';
+import { AppContext } from '../../../context/AppContext';
 
 
 export const TareasForm = () => {
@@ -45,6 +47,8 @@ export const TareasForm = () => {
     setBody(JSON.stringify(tarea));
   };
 
+  const { } = useContext<IUsuarioInfoContext>(AppContext);
+
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -57,7 +61,7 @@ export const TareasForm = () => {
           <input className="form-control" id="fecha" type="date" required value={fecha} onChange={onInputChange} />
         </div>
 
-        <ComboUsuarios setSelected={onSelectChange} />
+        <ComboUsuarios setSelected={onSelectChange} activa={UsuarioInfo} />
         <div className="form-group">
           <label htmlFor="descripcion">Descripción</label>
           <input className="form-control" id="descripcion" type="text" value={descripcion} onChange={onInputChange} />
@@ -97,7 +101,7 @@ export const TareasForm = () => {
       {(status === 200 || status === 201) && !loading && (
         <div className='alert alert-success' role='status' aria-live='polite'>
           Tarea guardada.
-          </div>
+        </div>
       )}
     </>
   );
