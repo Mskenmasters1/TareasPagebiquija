@@ -47,7 +47,7 @@ export const TareasForm = () => {
     setBody(JSON.stringify(tarea));
   };
 
-  const { } = useContext<IUsuarioInfoContext>(AppContext);
+  const { usuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
 
   return (
     <>
@@ -61,7 +61,7 @@ export const TareasForm = () => {
           <input className="form-control" id="fecha" type="date" required value={fecha} onChange={onInputChange} />
         </div>
 
-        <ComboUsuarios setSelected={onSelectChange} activa={UsuarioInfo} />
+        <ComboUsuarios setSelected={onSelectChange} activa={usuarioInfo._id} />
         <div className="form-group">
           <label htmlFor="descripcion">Descripción</label>
           <input className="form-control" id="descripcion" type="text" value={descripcion} onChange={onInputChange} />
