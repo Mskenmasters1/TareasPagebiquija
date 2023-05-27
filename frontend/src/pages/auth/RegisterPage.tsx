@@ -17,6 +17,11 @@ export const RegisterPage = () => {
   const [repeatPassword, setRepeatPassword] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
 
+  const [message, setMessage] = useState<string>('');
+  const [messageType, setMessageType] = useState<string>('');
+
+
+
   const {
     loading,
     status,
@@ -26,12 +31,25 @@ export const RegisterPage = () => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-
     if (password !== repeatPassword) {
-      setPasswordError('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
+      setMessage('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
+      setMessageType('danger');
       return;
     }
-    setPasswordError('');
+
+    if (loading) {
+      setMessage('Registrando...');
+      setMessageType('warning');
+    } else if (errorFetch) {
+      setMessage(errorMsg);
+      setMessageType('danger');
+    } else if (status === 201) {
+      setMessage('Registro efectuado con éxito.');
+      setMessageType('success');
+    } else {
+      setMessage('');
+      setMessageType('');
+    }
 
     const usuario: IUsuario = {
       nombre: nombre,
@@ -67,29 +85,14 @@ export const RegisterPage = () => {
           <label htmlFor="repeatPassword">Confirmación de contraseña</label>
           <input className="form-control" id="repeatPassword" type="password" value={repeatPassword} onChange={(e) => { setRepeatPassword(e.target.value); setPasswordError(''); }} aria-invalid={password.length > 1 && password.length < 6 ? 'true' : 'false'} required title="Repita la contraseña" />
         </div>
-        {passwordError && (
-          <div className="alert alert-danger" role="status" aria-live="polite">
-            {passwordError}
-          </div>
-        )}
         <button className="btn btn-success" type="submit">
           Registrarse
         </button>
       </form>
 
-      {loading && (
-        <div className="alert alert-warning" role="status" aria-live="polite">
-          Registrando...
-        </div>
-      )}
-      {errorFetch && !loading && (
-        <div className="alert alert-danger" role="status" aria-live="polite">
-          {errorMsg}
-        </div>
-      )}
-      {status === 201 && !loading && (
-        <div className="alert alert-success" role="status" aria-live="polite">
-          Registro efectuado con éxito.
+      {message && (
+        <div className={`alert alert-${messageType}`} role="region" aria-live="assertive">
+          {message}
         </div>
       )}
 
