@@ -2,10 +2,11 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { useFetchPost } from '../../hooks/useFetchPost';
 import { IUsuario } from '../../interfaces/usuario.interface';
-import { Link } from 'react-router-dom';
 import { aplicacion } from '../MainApp';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const RegisterPage = () => {
+  const navigate = useNavigate();
   const [body, setBody] = useState<string>('');
   const { form, onInputChange } = useForm<IUsuario>({
     nombre: '',
@@ -26,6 +27,9 @@ export const RegisterPage = () => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+    navigate('/login', {
+      replace: true
+    });
 
     if (password !== repeatPassword) {
       setPasswordError('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
@@ -61,7 +65,7 @@ export const RegisterPage = () => {
           <input className="form-control" id="password" type="password" value={password} onChange={onInputChange} aria-invalid={password.length > 1 && password.length < 6 ? 'true' : 'false'} aria-describedby="infoclave" required title="Introduzca una contraseña" />
           <div id="infoclave">
             {password.length > 1 && password.length < 6 && 'Esta contraseña es muy corta. Debe tener 6 caracteres como mínimo.'}
-        </div>
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="repeatPassword">Confirmación de contraseña</label>
