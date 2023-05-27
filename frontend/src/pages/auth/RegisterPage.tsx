@@ -15,12 +15,9 @@ export const RegisterPage = () => {
 
   const { nombre, email, password } = form;
   const [repeatPassword, setRepeatPassword] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
-
+  
   const [message, setMessage] = useState<string>('');
   const [messageType, setMessageType] = useState<string>('');
-
-
 
   const {
     loading,
@@ -31,12 +28,22 @@ export const RegisterPage = () => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+
     if (password !== repeatPassword) {
       setMessage('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
       setMessageType('danger');
       return;
     }
 
+    const usuario: IUsuario = {
+      nombre: nombre,
+      email: email,
+      password: password
+    };
+    setBody(JSON.stringify(usuario));
+  };
+
+  useEffect(() => {
     if (loading) {
       setMessage('Registrando...');
       setMessageType('warning');
@@ -50,19 +57,24 @@ export const RegisterPage = () => {
       setMessage('');
       setMessageType('');
     }
+  }, [loading, errorFetch, status]);
 
-    const usuario: IUsuario = {
-      nombre: nombre,
-      email: email,
-      password: password
-    };
-    setBody(JSON.stringify(usuario));
-  };
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+        setMessageType('');
+      }, 5000); // Los mensajes se borraran después de 5 segundos
+
+      return () => clearTimeout(timer); // Limpia el timer si el componente se desmonta
+    }
+  }, [message]);
 
   useEffect(() => {
     document.title = 'Registro - ' + aplicacion;
   }, []);
-  return (
+
+return (
     <>
       <h1>Alta de usuario</h1>
       <form onSubmit={onSubmit}>
@@ -83,7 +95,7 @@ export const RegisterPage = () => {
         </div>
         <div className="form-group">
           <label htmlFor="repeatPassword">Confirmación de contraseña</label>
-          <input className="form-control" id="repeatPassword" type="password" value={repeatPassword} onChange={(e) => { setRepeatPassword(e.target.value); setPasswordError(''); }} aria-invalid={password.length > 1 && password.length < 6 ? 'true' : 'false'} required title="Repita la contraseña" />
+          <input className="form-control" id="repeatPassword" type="password" value={repeatPassword} onChange={(e) => { setRepeatPassword(e.target.value); }} aria-invalid={password.length > 1 && password.length < 6 ? 'true' : 'false'} required title="Repita la contraseña" />
         </div>
         <button className="btn btn-success" type="submit">
           Registrarse
