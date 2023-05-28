@@ -6,7 +6,6 @@ import { ITarea } from '../../../interfaces/tarea.interface';
 import { IUsuarioInfoContext } from '../../../interfaces/context.interface';
 import { AppContext } from '../../../context/AppContext';
 
-
 export const TareasForm = () => {
   const [body, setBody] = useState<string>('');
   const { form, onInputChange, onSelectChange, onResetForm, onCheckBoxChange } = useForm<ITarea>({
@@ -18,14 +17,8 @@ export const TareasForm = () => {
     usuario: ''
   });
   const { titulo, usuario, descripcion, terminada, fecha, observaciones } = form;
-  console.log(usuario)
 
-  const {
-    loading,
-    status,
-    errorFetch,
-    errorMsg
-  } = useFetchPost<ITarea>('http://localhost:3000/api/tareas', body);
+  const { loading, status, errorFetch, errorMsg } = useFetchPost<ITarea>('http://localhost:3000/api/tareas', body);
 
   useEffect(() => {
     if (status === 201 && !loading) {
@@ -42,8 +35,9 @@ export const TareasForm = () => {
       observaciones: observaciones,
       descripcion: descripcion,
       usuario: usuario,
-      terminada: terminada,
+      terminada: terminada
     };
+
     setBody(JSON.stringify(tarea));
   };
 
@@ -61,14 +55,19 @@ export const TareasForm = () => {
           <input className="form-control" id="fecha" type="date" required value={fecha} onChange={onInputChange} />
         </div>
 
-        <ComboUsuarios setSelected={onSelectChange} activa={usuarioInfo._id} />
+        <ComboUsuarios setSelected={onSelectChange} activa={usuarioInfo.nombre} />
         <div className="form-group">
           <label htmlFor="descripcion">Descripción</label>
           <input className="form-control" id="descripcion" type="text" value={descripcion} onChange={onInputChange} />
         </div>
         <div className="form-group">
           <label htmlFor="observaciones">Observaciones</label>
-          <textarea className="form-control" id="observaciones" value={observaciones} onChange={onInputChange}></textarea>
+          <textarea
+            className="form-control"
+            id="observaciones"
+            value={observaciones}
+            onChange={onInputChange}
+          ></textarea>
         </div>
 
         <div className="form-check">
@@ -94,12 +93,12 @@ export const TareasForm = () => {
         </div>
       )}
       {errorFetch && !loading && (
-        <div className="alert alert-danger" role="status" aria-live='polite'>
+        <div className="alert alert-danger" role="status" aria-live="polite">
           {errorMsg}
         </div>
       )}
       {(status === 200 || status === 201) && !loading && (
-        <div className='alert alert-success' role='status' aria-live='polite'>
+        <div className="alert alert-success" role="status" aria-live="polite">
           Tarea guardada.
         </div>
       )}
