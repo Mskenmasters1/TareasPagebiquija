@@ -1,11 +1,17 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useContext, useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { useFetchPost } from '../../hooks/useFetchPost';
+import { useLogin } from '../../hooks/useLogin';
 import { IUsuario } from '../../interfaces/usuario.interface';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { aplicacion } from '../MainApp';
+import { ILocalStorageInfo } from '../../interfaces/localStorage.interface';
+import { AppContext } from '../../context/AppContext';
+import { IUsuarioInfoContext } from '../../interfaces/context.interface';
 
 export const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { setUsuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
   const [body, setBody] = useState<string>('');
   const { form, onInputChange } = useForm<IUsuario>({
     nombre: '',
@@ -25,6 +31,14 @@ export const RegisterPage = () => {
     errorFetch,
     errorMsg
   } = useFetchPost<IUsuario>('http://localhost:3000/api/usuarios', body, false);
+
+  const {
+    loading: loginLoading,
+    loginResponse,
+    status: loginStatus,
+    errorFetch: loginErrorFetch,
+    errorMsg: loginErrorMsg
+  } = useLogin(email, password, status === 201);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -51,13 +65,30 @@ export const RegisterPage = () => {
       setMessage(errorMsg);
       setMessageType('danger');
     } else if (status === 201) {
-      setMessage('Registro efectuado con éxito.');
+      setMessage('Registro efectuado con éxito. Iniciando sesión...');
       setMessageType('success');
     } else {
       setMessage('');
       setMessageType('');
     }
   }, [loading, errorFetch, status]);
+
+  useEffect(() => {
+    if (loginStatus === 200 && loginErrorMsg === '') {
+      setMessage('Redirigiendo...');
+      setMessageType('success');
+      setUsuarioInfo({ nombre: loginResponse.usuario.nombre });
+      const infoUsuarioStorage: ILocalStorageInfo = {
+        nombre: loginResponse.usuario.nombre,
+        token: loginResponse.token
+      };
+      localStorage.setItem('usuarioInfo', JSON.stringify(infoUsuarioStorage));
+      setTimeout(() => navigate('/', { replace: true }), 5000);
+    } else if (loginErrorFetch) {
+      setMessage('Error durante el inicio de sesión. Por favor, inténtelo de nuevo.');
+      setMessageType('danger');
+    }
+  }, [loginStatus, loginErrorMsg]);
 
   useEffect(() => {
     if (message) {
