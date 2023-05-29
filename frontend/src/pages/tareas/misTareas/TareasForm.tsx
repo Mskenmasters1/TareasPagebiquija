@@ -17,6 +17,8 @@ export const TareasForm = () => {
     usuario: ''
   });
   const { titulo, usuario, descripcion, terminada, fecha, observaciones } = form;
+  const [message, setMessage] = useState<string>('');
+  const [messageType, setMessageType] = useState<string>('');
 
   const { loading, status, errorFetch, errorMsg } = useFetchPost<ITarea>('http://localhost:3000/api/tareas', body);
 
@@ -42,6 +44,35 @@ export const TareasForm = () => {
   };
 
   const { usuarioInfo } = useContext<IUsuarioInfoContext>(AppContext);
+
+  useEffect(() => {
+    if (loading) {
+      setMessage('          Guardando tarea...');
+      setMessageType('warning');
+    } else if (errorFetch) {
+      setMessage(errorMsg);
+      setMessageType('danger');
+    } else if (status === 201 || status === 200) {
+      setMessage('Tarea guardada');
+      setMessageType('success');
+    } else {
+      setMessage('');
+      setMessageType('');
+    }
+  }, [loading, errorFetch, status]);
+
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+        setMessageType('');
+      }, 5000); // Los mensajes se borraran después de 5 segundos
+
+      return () => clearTimeout(timer); // Limpia el timer si el componente se desmonta
+    }
+  }, [message]);
+
 
   return (
     <>
@@ -87,21 +118,13 @@ export const TareasForm = () => {
         </button>
       </form>
 
-      {loading && (
-        <div className="alert alert-warning" role="status" aria-live="polite">
-          Guardando tarea...
+      {message && (
+        <div className={`alert alert-${messageType}`} role="region" aria-live="assertive">
+          {message}
         </div>
       )}
-      {errorFetch && !loading && (
-        <div className="alert alert-danger" role="status" aria-live="polite">
-          {errorMsg}
-        </div>
-      )}
-      {(status === 200 || status === 201) && !loading && (
-        <div className="alert alert-success" role="status" aria-live="polite">
-          Tarea guardada.
-        </div>
-      )}
+
+
     </>
   );
 };
